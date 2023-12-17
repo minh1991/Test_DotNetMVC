@@ -1,0 +1,98 @@
+﻿@model IEnumerable<Test_DotNetMVC.Models.Result.UserResultModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <h1>Index</h1>
+</head>
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserEmail)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserPhone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserAddress)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SchoolNm)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SexNm)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.UserEmail)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.UserPhone)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.UserAddress)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.SchoolNm)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => item.SexNm)
+                </td>
+                <td>
+                        @*<button type="button" class="btn btn-primary" onclick="DeleteUser(1)" id="deleteBtn">delete</button>*@
+                        <input type="button" onclick="DeleteUser(@Html.DisplayFor(modelItem => item.UserId))" value=" delete1">
+                </td>   
+            </tr>
+    }
+        </tbody>
+    </table>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Mã JavaScript của bạn ở đây
+        console.log("Document is ready for this view!");
+        
+    });
+    function DeleteUser(id) {
+        var userData = {
+            Id: id,
+        };
+        $.ajax({
+            url: "https://localhost:7218/Users/delete", // URL của API
+            method: "POST",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(userData),
+            success: function (data) {
+                // Xử lý kết quả thành công
+                $("#result").html("<strong>Title:</strong> " + data.title);
+            },
+            error: function () {
+                // Xử lý lỗi
+                $("#result").html("<span style='color: red;'>Error loading data</span>");
+            }
+        });
+    }
+</script>
+
