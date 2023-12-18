@@ -67,6 +67,9 @@
     }
         </tbody>
     </table>
+
+    <h1>Test tabulator</h1>
+    <div id="example-table"></div>
 </body>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -94,5 +97,125 @@
             }
         });
     }
+
+    // ------------------ Test tabulator ------------------
+    var table = new Tabulator("#example-table", {
+        layout: "fitColumns",
+        columns: [
+            { title: "No", formatter: "rownum", hozAlign: "center", width: 50 },
+            {
+                title: "MoneyEdit", field: "userPhone", editor: "input"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    var value = cell.getValue();
+                    return value ? "￥" + value.toLocaleString() : "￥0";
+                }
+                , formatterParams: {
+                    decimal: ",",
+                    symbol: "￥",
+                    precision: 0,
+                }, validator: ["numeric"],
+            },
+            {
+                title: "checkBoxEdit", field: "sexId", hozAlign: "center", editor: "tickCross"
+                , formatter: function (cell, formatterParams) {
+                    var value = cell.getValue();
+                    var checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.disabled = false;
+                    if (value == '1') {
+                        checkbox.checked = true;
+                    }else{
+                        checkbox.checked = false;
+                    }
+                    return checkbox;
+                }
+                , headerFilter: function (headerValue, rowValue, rowData, filterParams){
+                    var headerCheckbox = document.createElement("input");
+                    headerCheckbox.type = "checkbox";
+                    headerCheckbox.checked = false;
+                    headerCheckbox.addEventListener("change", function () {
+                        var rows = table.getRows();
+                        for (var i = 0; i < rows.length; i++) {
+                            var cell = rows[i].getCell("sexId");
+                            cell.setValue(headerCheckbox.checked);
+                        }
+                    });
+                    return headerCheckbox;
+                }
+            },
+            {
+                title: "updateDate", field: "updateDateTime"
+                , formatter: "datetime"
+                , formatterParams : {
+                    inputFormat: "yyyy-MM-ddTHH:mm:ss.SSS",
+                    outputFormat: "yyyy/MM/dd",
+                    invalidPlaceholder: "",
+                    timezone: "America/Los_Angeles",
+                }
+            },
+            { formatter: function(){
+                    return "<i class='bi bi-trash'></i>";
+                }, width: 40, hozAlign: "center", cellClick: function (e, cell) { trashIconClick(e, cell) } 
+            },
+            { title: "UserAddress", field: "userAddress"
+                , formatter: function (cell, formatterParams) {
+                    var container = document.createElement("div");
+                    container.className = "search-column";
+                    // Text
+                    var textElement = document.createElement("span");
+                    textElement.textContent = cell.getValue();
+                    // Icon
+                    var iconElement = document.createElement("i");
+                    iconElement.className = "bi bi-search search-icon";
+                    //iconElement.style.cursor = "pointer";
+                    iconElement.addEventListener("click", function (PointerEvent) {
+                        SearchIconClick(PointerEvent);
+                    });
+                    container.appendChild(textElement);
+                    container.appendChild(iconElement);
+                    return container;
+                }
+            },
+            { title: "SchoolNm", field: "schoolNm" },
+            { title: "SexNm", field: "sexNm" },
+            { title: "UserName", field: "userName" },
+            { title: "UserEmail", field: "userEmail" },
+            { title: "UserPhone", field: "userPhone" },
+            { title: "updateDateTimeview", field: "updateDateTime" },
+
+            
+            { title: "updateDateTime", field: "updateDateTime", visible: false, clipboard: true },
+
+        ]
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var dataListFromServer = @Html.Raw(Json.Serialize(Model));
+        console.log("dataListFromServer",dataListFromServer);
+        table.setData(dataListFromServer);
+
+    });
+
+    function trashIconClick(e, cell) {
+        var rowData = cell.getRow().getData();
+        console.log(e, cell, rowData);
+    }
+    function SearchIconClick(PointerEvent) {
+        console.log(PointerEvent);
+    }
+    
+    // ------------------ -------- ------------------
 </script>
+
+<style>
+    .search-column {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .search-icon {
+        cursor: pointer;
+    }
+</style>
 

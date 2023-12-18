@@ -53,7 +53,7 @@ namespace Test_DotNetMVC.Controllers
                         where user.DeleteFlg == "1"
                         && school.DeleteFlg == "1"
                         && sex.DeleteFlg == "1"
-                        && sex.SexId == sexValue
+                        // && sex.SexId == sexValue
                         select new UserResultModel
                         {
                             UserId = user.Id,
@@ -63,7 +63,8 @@ namespace Test_DotNetMVC.Controllers
                             UserAddress = user.Address,
                             SchoolNm = school != null ? school.SchoolName : null,
                             SexNm = sex != null ? sex.SexName : null,
-                            UpdateDateTime = user.UpdateDateTime
+                            SexId = sex != null ? sex.SexId : null,
+                            UpdateDateTime = user.UpdateDateTime,
                         };
 
             var  result = query.ToList();
