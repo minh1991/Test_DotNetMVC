@@ -50,7 +50,7 @@ namespace Test_DotNetMVC.Controllers
                         join sex in _context.MSexes
                         on user.Sex equals sex.SexId into sexGroup
                         from sex in sexGroup.DefaultIfEmpty()
-                        where user.DeleteFlg == "1"
+                        where user.DeleteFlg == "2"
                         && school.DeleteFlg == "1"
                         && sex.DeleteFlg == "1"
                         // && sex.SexId == sexValue
@@ -65,6 +65,7 @@ namespace Test_DotNetMVC.Controllers
                             SexNm = sex != null ? sex.SexName : null,
                             SexId = sex != null ? sex.SexId : null,
                             UpdateDateTime = user.UpdateDateTime,
+                            DeleteFlg = user.DeleteFlg,
                         };
 
             var  result = query.ToList();

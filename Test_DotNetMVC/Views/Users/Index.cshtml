@@ -70,6 +70,10 @@
 
     <h1>Test tabulator</h1>
     <div id="example-table"></div>
+    <div>
+        <input type="button" id="accessBtn" value="UPDATE" onclick="updateBtnClick()" />
+        <input type="button" id="addRowBtn" value="addRow" onclick="addRowBtnClick(table)" />
+    </div>
 </body>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -101,6 +105,7 @@
     // ------------------ Test tabulator ------------------
     var table = new Tabulator("#example-table", {
         layout: "fitColumns",
+        selectable: false,
         columns: [
             { title: "No", formatter: "rownum", hozAlign: "center", width: 50 },
             {
@@ -113,35 +118,59 @@
                     decimal: ",",
                     symbol: "￥",
                     precision: 0,
-                }, validator: ["numeric"],
+                }
+                , validator: ["numeric"]
+                , cellEdited: function (cell) { moneyEditer(cell) }
+
+            },
+            { title: "UserPhone", field: "userPhone", editor: true, validator: ["numeric"] },
+            {
+                title: "tinhtoan", field: "tinhtoan"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    var value = cell.getValue();
+                    return value ? "￥" + value.toLocaleString() : "￥0";
+                }
+                , formatterParams: {
+                    decimal: ",",
+                    symbol: "￥",
+                    precision: 0,
+                }
+                , validator: ["numeric"]
             },
             {
-                title: "checkBoxEdit", field: "sexId", hozAlign: "center", editor: "tickCross"
-                , formatter: function (cell, formatterParams) {
-                    var value = cell.getValue();
-                    var checkbox = document.createElement("input");
-                    checkbox.type = "checkbox";
-                    checkbox.disabled = false;
-                    if (value == '1') {
-                        checkbox.checked = true;
-                    }else{
-                        checkbox.checked = false;
-                    }
-                    return checkbox;
-                }
-                , headerFilter: function (headerValue, rowValue, rowData, filterParams){
-                    var headerCheckbox = document.createElement("input");
-                    headerCheckbox.type = "checkbox";
-                    headerCheckbox.checked = false;
-                    headerCheckbox.addEventListener("change", function () {
-                        var rows = table.getRows();
-                        for (var i = 0; i < rows.length; i++) {
-                            var cell = rows[i].getCell("sexId");
-                            cell.setValue(headerCheckbox.checked);
-                        }
-                    });
-                    return headerCheckbox;
-                }
+                title: "checkBoxEdit", field: "sexId", hozAlign: "center", editor: true
+                , formatter: "tickCross"
+                //, formatterParams: {
+                //    allowEmpty: true,
+                //    allowTruthy: false,
+                //    tickElement: "<i class='fa fa-check'></i>",
+                //    crossElement: "<i class='fa fa-times'></i>",
+                //}
+                //, formatter: function (cell, formatterParams) {
+                //    var value = cell.getValue();
+                //    var checkbox = document.createElement("input");
+                //    checkbox.type = "checkbox";
+                //    checkbox.disabled = false;
+                //    if (value == '1') {
+                //        checkbox.checked = true;
+                //    }else{
+                //        checkbox.checked = false;
+                //    }
+                //    return checkbox;
+                //}
+                //, headerFilter: function (headerValue, rowValue, rowData, filterParams) {
+                //    var headerCheckbox = document.createElement("input");
+                //    headerCheckbox.type = "checkbox";
+                //    headerCheckbox.checked = false;
+                //    headerCheckbox.addEventListener("change", function () {
+                //        var rows = table.getRows();
+                //        for (var i = 0; i < rows.length; i++) {
+                //            var cell = rows[i].getCell("sexId");
+                //            cell.setValue(headerCheckbox.checked);
+                //        }
+                //    });
+                //    return headerCheckbox;
+                //}
             },
             {
                 title: "updateDate", field: "updateDateTime"
@@ -155,7 +184,13 @@
             },
             { formatter: function(){
                     return "<i class='bi bi-trash'></i>";
-                }, width: 40, hozAlign: "center", cellClick: function (e, cell) { trashIconClick(e, cell) } 
+                }, width: 40, hozAlign: "center", cellClick: function (e, cell) { trashIconClick(table, e, cell) } 
+            },
+            { title: "DeleteFlg", field: "deleteFlg", editor: true },
+            {
+                formatter: function () {
+                    return "<i class='bi bi-palette'></i>";
+                }, width: 40, hozAlign: "center", cellClick: function (e, cell) { rowColorChage(table, e, cell) }
             },
             { title: "UserAddress", field: "userAddress"
                 , formatter: function (cell, formatterParams) {
@@ -180,30 +215,111 @@
             { title: "SexNm", field: "sexNm" },
             { title: "UserName", field: "userName" },
             { title: "UserEmail", field: "userEmail" },
-            { title: "UserPhone", field: "userPhone" },
             { title: "updateDateTimeview", field: "updateDateTime" },
-
-            
             { title: "updateDateTime", field: "updateDateTime", visible: false, clipboard: true },
 
-        ]
+        ],
     });
 
     document.addEventListener("DOMContentLoaded", function () {
         var dataListFromServer = @Html.Raw(Json.Serialize(Model));
         console.log("dataListFromServer",dataListFromServer);
-        table.setData(dataListFromServer);
+        if (dataListFromServer.length === 0) {
+            let tmpList = [{
+                deleteFlg: ""
+                , schoolNm: ""
+                , sexId: ""
+                , sexNm: ""
+                , updateDateTime: ""
+                , userAddress: ""
+                , userEmail: ""
+                , userId: ""
+                , userName: ""
+                , userPhone: ""
+            }] ;
+            console.log("dqwdq", tmpList);
+            table.setData(tmpList);
+       }else{
+            table.setData(dataListFromServer);
+       }
+        
 
     });
 
-    function trashIconClick(e, cell) {
-        var rowData = cell.getRow().getData();
+    table.on("tableBuilt", function () { 
+        console.log("tableBuiltaaaaa", table.getDataCount());
+    });
+    
+    let objdeleteRow = []
+    function trashIconClick(table, e, cell) {
+        let rowData = cell.getRow().getData();
+        let getRow = cell.getRow()
         console.log(e, cell, rowData);
+        //console.log(table);
+        getRow.update({ "deleteFlg": "0" });
+        objdeleteRow.push(getRow.getData());
+
+        
+        // getRow.getElement().style.display = 'none';   có thể giữ lại thông tin row nhưng không tính toán lại No
+        getRow.delete();    // có thể tính toán lại No nhưng không thể gữ được thông tin row đã xóa( cần hỗ trợ thêm objdeleteRow)
     }
+
+    function rowColorChage(table, e, cell) {
+        let getRow = cell.getRow()
+        getRow.update({ "deleteFlg": "2" });
+        getRow.getElement().style.background = 'black';
+    }
+
+    function moneyEditer(cell) {
+        // let cellValue = cell.getValue();
+        let getRow = cell.getRow().getData();
+        let NumA = getRow.userPhone;
+        let NumB = getRow.deleteFlg;
+        let NumC = NumA * NumB;
+        console.log(NumA, NumB, NumC);
+        cell.getRow().update({ "tinhtoan": NumC });
+        //let getRow
+
+    }
+    
+    function updateBtnClick(){
+        let tableData = table.getData();
+        console.log("updateBtnClick", tableData);
+        console.log("objdeleteRow", objdeleteRow);
+        let dataListUpdate = [];
+        tableData.forEach(item =>{
+            if (item.deleteFlg == '0' || item.deleteFlg == '1') {
+                dataListUpdate.push(item);
+            }
+        });
+        objdeleteRow.forEach(item => {
+            if (item.deleteFlg == '0' || item.deleteFlg == '1') {
+                dataListUpdate.push(item);
+            }
+        });
+        console.log("dataListUpdate", dataListUpdate);
+    }
+
+    function addRowBtnClick(_table) {
+        let tmpList = {
+            deleteFlg: ""
+            , schoolNm: ""
+            , sexId: ""
+            , sexNm: ""
+            , updateDateTime: ""
+            , userAddress: ""
+            , userEmail: ""
+            , userId: ""
+            , userName: ""
+            , userPhone: ""
+        };
+        _table.addRow(tmpList);
+    }
+
     function SearchIconClick(PointerEvent) {
         console.log(PointerEvent);
     }
-    
+
     // ------------------ -------- ------------------
 </script>
 
