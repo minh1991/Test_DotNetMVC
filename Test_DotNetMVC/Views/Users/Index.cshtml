@@ -74,6 +74,10 @@
         <input type="button" id="accessBtn" value="UPDATE" onclick="updateBtnClick()" />
         <input type="button" id="addRowBtn" value="addRow" onclick="addRowBtnClick(table)" />
     </div>
+    <div>
+        <input type="text" id="currencyInput" onblur="formatCurrency(this)">
+        <input type="number" id="currencyNumber" value="">
+    </div>
 </body>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -101,15 +105,44 @@
             }
         });
     }
+    function formatCurrency(_input) {
+        let amountString = _input.value.replace(/[^\d]/g, ''); 
+        let amount = parseInt(amountString, 10);
 
-    // ------------------ Test tabulator ------------------
+        if (!isNaN(amount)) {
+            let formattedAmount = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'JPY'
+            }).format(amount);
+
+            _input.value = formattedAmount;
+        } else {
+            _input.value = '￥0';
+        }
+
+        // test money -> number
+        document.getElementById("currencyNumber").value = convertCurrencyToNumber(document.getElementById("currencyInput").value);
+    }
+    
+    function convertCurrencyToNumber(currencyString) {
+        let numericString = currencyString.replace(/[^\d]/g, '');
+        let numericValue = parseInt(numericString, 10);
+        if (!isNaN(numericValue)) {
+            return numericValue;
+        } else {
+            return null;
+        }
+    }
+    
+
+        // ------------------ Test tabulator ------------------
     var table = new Tabulator("#example-table", {
         layout: "fitColumns",
         selectable: false,
         columns: [
             { title: "No", formatter: "rownum", hozAlign: "center", width: 50 },
             {
-                title: "MoneyEdit", field: "userPhone", editor: "input"
+                title: "MoneyEdit", field: "giaTri", editor: "input"
                 , formatter: function (cell, formatterParams, onRendered) {
                     var value = cell.getValue();
                     return value ? "￥" + value.toLocaleString() : "￥0";
@@ -123,6 +156,8 @@
                 , cellEdited: function (cell) { moneyEditer(cell) }
 
             },
+            { title: "SoLuong", field: "soLuong", editor: true, validator: ["numeric"] },
+            { title: "Tong", field: "total", editor: false, validator: ["numeric"] },
             { title: "UserPhone", field: "userPhone", editor: true, validator: ["numeric"] },
             {
                 title: "tinhtoan", field: "tinhtoan"
@@ -236,6 +271,8 @@
                 , userId: ""
                 , userName: ""
                 , userPhone: ""
+                , giaTri: 0
+                , soLuong: 0
             }] ;
             console.log("dqwdq", tmpList);
             table.setData(tmpList);

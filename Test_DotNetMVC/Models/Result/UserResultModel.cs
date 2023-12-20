@@ -15,5 +15,7 @@ namespace Test_DotNetMVC.Models.Result
         public string? SexId { get; set; } = "";
         public DateTime? UpdateDateTime { get; set; }
         public string? DeleteFlg { get; set; } = "";
+        public int? GiaTri { get; set; } = 0;
+        public int? SoLuong { get; set; } = 0;
     }
 }

@@ -14,5 +14,7 @@ namespace Test_DotNetMVC.Models.Entities
         public string? Sex { get; set; }
         public string? School { get; set; }
         public DateTime? UpdateDateTime { get; set; }
+        public int? GiaTri { get; set; }
+        public int? SoLuong { get; set; }
     }
 }
