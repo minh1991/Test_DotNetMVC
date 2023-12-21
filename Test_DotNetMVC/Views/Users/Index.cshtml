@@ -61,7 +61,7 @@
                 </td>
                 <td>
                         @*<button type="button" class="btn btn-primary" onclick="DeleteUser(1)" id="deleteBtn">delete</button>*@
-                        <input type="button" onclick="DeleteUser(@Html.DisplayFor(modelItem => item.UserId))" value=" delete1">
+                        <input type="button" onclick="DeleteUserTest(@Html.DisplayFor(modelItem => item.UserId))" value=" delete1">
                 </td>   
             </tr>
     }
@@ -85,12 +85,21 @@
         console.log("Document is ready for this view!");
         
     });
-    function DeleteUser(id) {
+    function DeleteUserTest(id) {
         var userData = {
-            Id: id,
+            Id: 1
+            , UserNameTxt:"fwew"
+            , UserNameFlg: "1"
+            , BithdayTxt:"20231321"
+            , Num01:11
+            , Text01: ""
+            , Text02: "わたしわたし"
+            , Num02:10000
+
         };
+        console.log("userData", JSON.stringify(userData));
         $.ajax({
-            url: "https://localhost:7218/Users/delete", // URL của API
+            url: "https://localhost:7218/Users/TestCheck", // URL của API
             method: "POST",
             dataType: "json",
             contentType: "application/json",
@@ -99,7 +108,10 @@
                 // Xử lý kết quả thành công
                 $("#result").html("<strong>Title:</strong> " + data.title);
             },
-            error: function () {
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error:", errorThrown);
+                console.log("Status:", textStatus);
+                console.log("Response:", jqXHR.responseText);
                 // Xử lý lỗi
                 $("#result").html("<span style='color: red;'>Error loading data</span>");
             }

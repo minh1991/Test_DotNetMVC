@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using Test_DotNetMVC.Models.Entities;
 using Test_DotNetMVC.Models.RequestModel;
 using Test_DotNetMVC.Models.Result;
@@ -205,6 +210,174 @@ namespace Test_DotNetMVC.Controllers
         private bool UserExists(int id)
         {
           return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        [HttpPost, ActionName("TestCheck")]
+        public async Task<IActionResult> TestCheck([FromBody] RequestUser model)
+        {
+            string msg;
+            // -----Hissu
+            var requiredFields = new List<string> { nameof(RequestUser.Id), nameof(RequestUser.UserNameTxt), nameof(RequestUser.UserNameFlg) };
+            foreach (var propertyName in requiredFields)
+            {
+                var propertyValue = model.GetType().GetProperty(propertyName)?.GetValue(model, null);
+                if (!HissuCheck(propertyValue!))
+                {
+                    var displayName = GetDisplayName(model, propertyName);
+                    msg = $"{displayName} not entered";
+                    Console.WriteLine(msg);
+                    return RedirectToAction("TestCheck");
+                }
+            }
+            // ----- length
+            var lengthChecks = new List<(string PropertyName, int MaxLength)>
+                {
+                    (nameof(RequestUser.Text01), 10),
+                    (nameof(RequestUser.Text02), 5),
+                    (nameof(RequestUser.Num01), 3),
+                    (nameof(RequestUser.Num02), 3)
+                };
+            foreach (var (propertyName, maxLength) in lengthChecks)
+            {
+                var propertyValue = model.GetType().GetProperty(propertyName)?.GetValue(model, null);
+                if (LengthCheck(propertyValue!, maxLength) == false)
+                {
+                    var displayName = GetDisplayName(model, propertyName);
+                    msg = $"{displayName} must not exceed {maxLength} characters";
+                    Console.WriteLine(msg);
+                    return RedirectToAction("TestCheck");
+                }
+            }
+            // ----- length co dinh
+            var lengthValidationChecks = new List<(string PropertyName, int FixedLength)>
+                {
+                    (nameof(RequestUser.Text01), 10),
+                    (nameof(RequestUser.Text02), 5),
+                };
+            foreach (var (propertyName, FixedLength) in lengthValidationChecks)
+            {
+                var propertyValue = model.GetType().GetProperty(propertyName)?.GetValue(model, null);
+                if (LengthFixedCheck(propertyValue!, FixedLength) == false)
+                {
+                    var displayName = GetDisplayName(model, propertyName);
+                    msg = $"{displayName} must not exceed {FixedLength} characters";
+                    Console.WriteLine(msg);
+                    return RedirectToAction("TestCheck");
+                }
+            }
+            // ---- checkStringDateTime
+            var dateValidationChecks = new List<(string PropertyName, string Format)>
+                {
+                    (nameof(RequestUser.BithdayTxt), "yyyyMMdd"),
+                };
+            foreach (var (propertyName, format) in dateValidationChecks)
+            {
+                var propertyValue = model.GetType().GetProperty(propertyName)?.GetValue(model, null);
+                if (DateTimeStringCheck(propertyValue!, format) == true)
+                {
+                    var displayName = GetDisplayName(model, propertyName);
+                    msg = $"{displayName} is in wrong date format";
+                    Console.WriteLine(msg);
+                    return RedirectToAction("TestCheck");
+                }
+            }
+            // ---- checkNumber
+            // AllowNegative = true là cho phép nhập âm
+            // DecimalPlaces số thập phân sau dấu phẩy
+            var numberValidationChecks = new List<(string PropertyName, bool AllowNegative, int DecimalPlaces)>
+                {
+                    (nameof(RequestUser.Id), false, 0),
+                    (nameof(RequestUser.Num01), true, 2),
+                    (nameof(RequestUser.Num02), false, 1)
+                };
+            foreach (var (propertyName, allowNegative, decimalPlaces) in numberValidationChecks)
+            {
+                var propertyValue = model.GetType().GetProperty(propertyName)?.GetValue(model, null);
+                if (NumberCheck(propertyValue!, allowNegative, decimalPlaces) == false)
+                {
+                    var displayName = GetDisplayName(model, propertyName);
+                    msg = $"{displayName} is not num";
+                    Console.WriteLine(msg);
+                    return RedirectToAction("TestCheck");
+                }
+            }
+
+            return RedirectToAction("TestCheck");
+        }
+
+
+        private string GetDisplayName(object model, string propertyName)
+        {
+            var displayAttribute = model.GetType().GetProperty(propertyName)?.GetCustomAttributes(typeof(DisplayAttribute), true)
+                                  .FirstOrDefault() as DisplayAttribute;
+
+            return displayAttribute?.Name ?? propertyName;
+        }
+
+        private bool HissuCheck(object _propertyValue)
+        {
+            if (_propertyValue == null || (_propertyValue is string stringValue && string.IsNullOrEmpty(stringValue)))
+            {
+                return false;
+            }
+            return true;
+        }
+        private bool LengthCheck(object _propertyValue, int _maxLength)
+        {
+            if (_propertyValue is string stringValue && (stringValue?.Length ?? 0) > _maxLength)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool DateTimeStringCheck(object _propertyValue, string _format)
+        {
+            if (_propertyValue is string stringValue)
+            {
+                return !DateTime.TryParseExact(stringValue, _format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result);
+            }
+            return true;
+        }
+
+        private bool NumberCheck(object _propertyValue, bool _allowNegative, int _decimalPlaces)
+        {
+            if (_propertyValue is string stringValue)
+            {
+                string regexPattern = $"^-?\\d+(\\.\\d{{1,{_decimalPlaces}}})?$";
+                if (_allowNegative)
+                {
+                    regexPattern = "^-?" + regexPattern;
+                }
+                return Regex.IsMatch(stringValue, regexPattern);
+            }
+            return true;
+        }
+
+        private bool LengthFixedCheck(object _propertyValue, int _FixedLength)
+        {
+            if (_propertyValue is string stringValue && stringValue.Length != _FixedLength)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        // 全角チェック
+        private bool IsFullWidth(string value)
+        {
+            //string regexPattern = @"[\p{IsHiragana}\p{IsKatakana}\p{IsCJKUnifiedIdeographs}]";
+            string regexPattern = @"/^[^\x01-\x7E\uFF61-\uFF9F]+$/";
+
+            return Regex.IsMatch(value, regexPattern);
+        }
+        // 半角チェック
+        private bool IsHalfWidth(string value)
+        {
+            // Biểu thức chính quy để kiểm tra bán kính ký tự
+            string regexPattern = @"^[a-zA-Z0-9!-/:-@¥[-`{-~]*$";
+
+            return Regex.IsMatch(value, regexPattern);
         }
 
     }
