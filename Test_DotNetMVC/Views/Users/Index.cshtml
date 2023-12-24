@@ -4,6 +4,8 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+
 <head>
     <h1>Index</h1>
 </head>
@@ -85,19 +87,24 @@
         console.log("Document is ready for this view!");
         
     });
+
+    console.log("ViewBag", @Html.Raw(Json.Serialize(ViewBag)));
+
+
     function DeleteUserTest(id) {
         var userData = {
             Id: 1
             , UserNameTxt:"fwew"
             , UserNameFlg: "1"
-            , BithdayTxt:"20231321"
+            , BithdayTxt:"20231221"
             , Num01:11
-            , Text01: ""
-            , Text02: "わたしわたし"
+            , Text01: "1234567891"
+            , Text02: "aaaaa"
             , Num02:10000
 
         };
         console.log("userData", JSON.stringify(userData));
+
         $.ajax({
             url: "https://localhost:7218/Users/TestCheck", // URL của API
             method: "POST",
@@ -106,7 +113,9 @@
             data: JSON.stringify(userData),
             success: function (data) {
                 // Xử lý kết quả thành công
+                console.log("success", data);
                 $("#result").html("<strong>Title:</strong> " + data.title);
+                window.location.href = "https://localhost:7218/Users?Addresaaew=A001";
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("Error:", errorThrown);

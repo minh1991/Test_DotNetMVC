@@ -20,7 +20,7 @@ namespace Test_DotNetMVC.Controllers
 
         public IActionResult Index()
         {
-            HttpContext.Session.SetString("sex", "1");
+            
             return View();
         }
 
@@ -30,9 +30,10 @@ namespace Test_DotNetMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(HomeModel model)
+        public async Task<IActionResult> Index(HomeModel model)
         {
-            
+            HttpContext.Session.SetString("Address", "D002");
+            await HttpContext.Session.CommitAsync();
             return RedirectToAction("Index", "Users");
         }
 

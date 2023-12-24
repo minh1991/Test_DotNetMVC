@@ -36,17 +36,25 @@ namespace Test_DotNetMVC.Controllers
 
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string Addresaaew = "", bool reload = false)
         {
-            var item = HttpContext.Session.Get("sex");
+            if (Addresaaew.Length > 0)
+            {
+                HttpContext.Session.SetString("Address", Addresaaew);
+            }
+
+            var item = HttpContext.Session.Get("Address");
+
             string result = System.Text.Encoding.UTF8.GetString(item);
 
-            var displayDataList = GetUsers(result);
-              return _context.Users != null ? 
+            var displayDataList = GetUsers(result); ;
+
+            Console.WriteLine("result", result);
+            return _context.Users != null ? 
                           View(displayDataList) :
                           Problem("Entity set 'T202312Context.Users'  is null.");
         }
-        public IEnumerable<UserResultModel> GetUsers(string sexValue)
+        public IEnumerable<UserResultModel> GetUsers(string addrert)
         {
             var query = from user in _context.Users
                         join school in _context.MSchools
@@ -58,7 +66,7 @@ namespace Test_DotNetMVC.Controllers
                         where user.DeleteFlg == "1"
                         && school.DeleteFlg == "1"
                         && sex.DeleteFlg == "1"
-                        // && sex.SexId == sexValue
+                         && user.Address == addrert
                         select new UserResultModel
                         {
                             UserId = user.Id,
@@ -217,6 +225,7 @@ namespace Test_DotNetMVC.Controllers
         {
             string msg;
             // -----Hissu
+            /* -- OK---
             var requiredFields = new List<string> { nameof(RequestUser.Id), nameof(RequestUser.UserNameTxt), nameof(RequestUser.UserNameFlg) };
             foreach (var propertyName in requiredFields)
             {
@@ -229,7 +238,9 @@ namespace Test_DotNetMVC.Controllers
                     return RedirectToAction("TestCheck");
                 }
             }
+            ----*/
             // ----- length
+            /* -- OK---
             var lengthChecks = new List<(string PropertyName, int MaxLength)>
                 {
                     (nameof(RequestUser.Text01), 10),
@@ -248,7 +259,9 @@ namespace Test_DotNetMVC.Controllers
                     return RedirectToAction("TestCheck");
                 }
             }
+            ----*/
             // ----- length co dinh
+            /* -- OK---
             var lengthValidationChecks = new List<(string PropertyName, int FixedLength)>
                 {
                     (nameof(RequestUser.Text01), 10),
@@ -265,7 +278,9 @@ namespace Test_DotNetMVC.Controllers
                     return RedirectToAction("TestCheck");
                 }
             }
+            ----*/
             // ---- checkStringDateTime
+            /* -- OK---
             var dateValidationChecks = new List<(string PropertyName, string Format)>
                 {
                     (nameof(RequestUser.BithdayTxt), "yyyyMMdd"),
@@ -281,28 +296,35 @@ namespace Test_DotNetMVC.Controllers
                     return RedirectToAction("TestCheck");
                 }
             }
+            ----*/
             // ---- checkNumber
             // AllowNegative = true là cho phép nhập âm
             // DecimalPlaces số thập phân sau dấu phẩy
-            var numberValidationChecks = new List<(string PropertyName, bool AllowNegative, int DecimalPlaces)>
-                {
-                    (nameof(RequestUser.Id), false, 0),
-                    (nameof(RequestUser.Num01), true, 2),
-                    (nameof(RequestUser.Num02), false, 1)
-                };
-            foreach (var (propertyName, allowNegative, decimalPlaces) in numberValidationChecks)
-            {
-                var propertyValue = model.GetType().GetProperty(propertyName)?.GetValue(model, null);
-                if (NumberCheck(propertyValue!, allowNegative, decimalPlaces) == false)
-                {
-                    var displayName = GetDisplayName(model, propertyName);
-                    msg = $"{displayName} is not num";
-                    Console.WriteLine(msg);
-                    return RedirectToAction("TestCheck");
-                }
-            }
+            // var numberValidationChecks = new List<(string PropertyName, bool AllowNegative, int DecimalPlaces)>
+            //     {
+            //         (nameof(RequestUser.Text01), false, 2),
+            //         (nameof(RequestUser.BithdayTxt), true, 1),
+            //         //(nameof(RequestUser.Num02), false, 1),
+            //     };
+            // foreach (var (propertyName, allowNegative, decimalPlaces) in numberValidationChecks)
+            // {
+            //     var propertyValue = model.GetType().GetProperty(propertyName)?.GetValue(model, null);
+            //     if (NumberCheck(propertyValue!, allowNegative, decimalPlaces) == false)
+            //     {
+            //         var displayName = GetDisplayName(model, propertyName);
+            //         msg = $"{displayName} is not num";
+            //         Console.WriteLine(msg);
+            //         return RedirectToAction("TestCheck");
+            //     }
+            // }
 
-            return RedirectToAction("TestCheck");
+            var dataStart = new 
+            {
+                data1= "abc",
+                data2 = "ioqoiqw",
+            };
+
+            return Json(dataStart);
         }
 
 
@@ -344,14 +366,14 @@ namespace Test_DotNetMVC.Controllers
         {
             if (_propertyValue is string stringValue)
             {
-                string regexPattern = $"^-?\\d+(\\.\\d{{1,{_decimalPlaces}}})?$";
-                if (_allowNegative)
-                {
-                    regexPattern = "^-?" + regexPattern;
-                }
+                // regexPattern ko ổn
+                string regexPattern = _allowNegative
+                    ? @"^-?\d+(\.\d{1," + _decimalPlaces + @"})?$"
+                    : @"^\d+(\.\d{1," + _decimalPlaces + @"})?$";
+
                 return Regex.IsMatch(stringValue, regexPattern);
             }
-            return true;
+            return false; 
         }
 
         private bool LengthFixedCheck(object _propertyValue, int _FixedLength)
@@ -366,8 +388,7 @@ namespace Test_DotNetMVC.Controllers
         // 全角チェック
         private bool IsFullWidth(string value)
         {
-            //string regexPattern = @"[\p{IsHiragana}\p{IsKatakana}\p{IsCJKUnifiedIdeographs}]";
-            string regexPattern = @"/^[^\x01-\x7E\uFF61-\uFF9F]+$/";
+            string regexPattern = @"^[^ -~｡-ﾟ]+$";
 
             return Regex.IsMatch(value, regexPattern);
         }
