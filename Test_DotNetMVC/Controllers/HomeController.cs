@@ -32,7 +32,7 @@ namespace Test_DotNetMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(HomeModel model)
         {
-            HttpContext.Session.SetString("Address", "D002");
+            HttpContext.Session.SetString("Address", "A001");
             await HttpContext.Session.CommitAsync();
             return RedirectToAction("Index", "Users");
         }

@@ -80,6 +80,9 @@
         <input type="text" id="currencyInput" onblur="formatCurrency(this)">
         <input type="number" id="currencyNumber" value="">
     </div>
+    <div>
+        <input type="file" name="file" />
+    </div>
 </body>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -193,6 +196,13 @@
                 }
                 , validator: ["numeric"]
             },
+            { title: "Filename", field: "fileName", editor: false },
+            {
+                formatter: function () {
+                    return "<label for='file-input'><i class='bi bi-search'></i></label>";
+                }, width: 40, hozAlign: "center"
+                , cellClick: function (e, cell) { handleIconClick(table, e, cell) }
+            },
             {
                 title: "checkBoxEdit", field: "sexId", hozAlign: "center", editor: true
                 , formatter: "tickCross"
@@ -248,25 +258,25 @@
                     return "<i class='bi bi-palette'></i>";
                 }, width: 40, hozAlign: "center", cellClick: function (e, cell) { rowColorChage(table, e, cell) }
             },
-            { title: "UserAddress", field: "userAddress"
-                , formatter: function (cell, formatterParams) {
-                    var container = document.createElement("div");
-                    container.className = "search-column";
-                    // Text
-                    var textElement = document.createElement("span");
-                    textElement.textContent = cell.getValue();
-                    // Icon
-                    var iconElement = document.createElement("i");
-                    iconElement.className = "bi bi-search search-icon";
-                    //iconElement.style.cursor = "pointer";
-                    iconElement.addEventListener("click", function (PointerEvent) {
-                        SearchIconClick(PointerEvent);
-                    });
-                    container.appendChild(textElement);
-                    container.appendChild(iconElement);
-                    return container;
-                }
-            },
+            //{ title: "UserAddress", field: "userAddress"
+            //    , formatter: function (cell, formatterParams) {
+            //        var container = document.createElement("div");
+            //        container.className = "search-column";
+            //        // Text
+            //        var textElement = document.createElement("span");
+            //        textElement.textContent = cell.getValue();
+            //        // Icon
+            //        var iconElement = document.createElement("i");
+            //        iconElement.className = "bi bi-search search-icon";
+            //        //iconElement.style.cursor = "pointer";
+            //        iconElement.addEventListener("click", function (PointerEvent) {
+            //            SearchIconClick(PointerEvent);
+            //        });
+            //        container.appendChild(textElement);
+            //        container.appendChild(iconElement);
+            //        return container;
+            //    }
+            //},
             { title: "SchoolNm", field: "schoolNm" },
             { title: "SexNm", field: "sexNm" },
             { title: "UserName", field: "userName" },
@@ -374,8 +384,37 @@
         _table.addRow(tmpList);
     }
 
-    function SearchIconClick(PointerEvent) {
-        console.log(PointerEvent);
+    function handleIconClick(table, e, cell) {
+        let getRow = cell.getRow();
+        console.log("handleIconClick", getRow);
+        //var fileName = prompt("Enter file name:");
+        //console.log("handleIconClick", fileName);
+        var input = document.createElement("input");
+        input.type = "file";
+        input.name = "fileUpload"
+        input.style.display = "none";
+        input.addEventListener("change", function (event) {
+            var selectedFile = event.target.files;
+            console.log("Selected Files:", selectedFile);
+
+            var formData = new FormData();
+            formData.append("fileUpload", selectedFile[0]);
+
+            fetch("https://localhost:7218/Users/UploadFile", {
+                method:"POST",
+                body: formData
+            })
+            .then(response => { response.json() })
+            .then(data => {
+                 console.log("UPLoad success", data);
+            })
+            .catch(err => {
+                        console.log("UPLoad err", data);
+            });
+
+            getRow.update({ "fileName": selectedFile[0].name });
+        });
+        input.click();
     }
 
     // ------------------ -------- ------------------

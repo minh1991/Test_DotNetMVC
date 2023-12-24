@@ -327,6 +327,42 @@ namespace Test_DotNetMVC.Controllers
             return Json(dataStart);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UploadFile(IFormFile fileUpload)
+        {
+            if (fileUpload != null && fileUpload.Length > 0) 
+            {
+                string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+                string fileName = Path.GetFileName(fileUpload.FileName);
+                string filePath = Path.Combine(uploadPath, fileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    fileUpload.CopyTo(fileStream);
+                }
+                var returnJson = new
+                {
+                    fileName = fileName
+                };
+                return Json(fileName);
+            }
+            return View();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
         private string GetDisplayName(object model, string propertyName)
         {
