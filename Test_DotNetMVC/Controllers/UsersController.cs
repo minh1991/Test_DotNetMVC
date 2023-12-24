@@ -332,6 +332,7 @@ namespace Test_DotNetMVC.Controllers
         {
             if (fileUpload != null && fileUpload.Length > 0) 
             {
+                //D:\\ASP.NET\\20231216\\Test_DotNetMVC\\Test_DotNetMVC\\Uploads
                 string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
                 if (!Directory.Exists(uploadPath))
                 {
