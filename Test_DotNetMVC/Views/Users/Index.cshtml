@@ -209,7 +209,9 @@
                 ,formatter: function (cell, formatterParams) {
                     return "<input type='checkbox'" + (cell.getValue() == 1 ? " checked" : "") + ">";
                 },
-                cellClick: function (e, cell) {
+                cellMouseDown: function (e, cell) {
+                    // dung cellClick là Click vào cell
+                    // cellMouseDown bắt sự kiện khi click chuột trái
                     cell.setValue(cell.getValue() == 1 ? 0 : 1);
                 }
             },
