@@ -12,6 +12,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using Test_DotNetMVC.Model.Entities;
 using Test_DotNetMVC.Models.Entities;
 using Test_DotNetMVC.Models.RequestModel;
 using Test_DotNetMVC.Models.Result;
@@ -148,7 +149,7 @@ namespace Test_DotNetMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,Phone,Address")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,Phone,Address")] Model.Entities.User user)
         {
             if (id != user.Id)
             {

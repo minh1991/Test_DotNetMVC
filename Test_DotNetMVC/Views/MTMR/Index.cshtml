@@ -1,0 +1,305 @@
+﻿@model Test_DotNetMVC.Models.ResponseModel.MTMRModel
+
+@{
+    ViewData["Title"] = "MTMR";
+}
+
+<partial name="_Info" model="@Model._MTMRInfo" />
+<partial name="_header" model="@Model._MTMRInfo" />
+<partial name="_List" model="@Model._MTMRDetailList" />
+<partial name="_remarks" model="@Model._MTMRInfo" />
+<partial name="_Button" />
+<partial name="_Other" model="@Model._OrthersItems" />
+
+@section Scripts{
+    <script type="text/javascript">
+        const TABLE_LIST = [
+            {
+                title: "No"
+                , field: "No"
+                , formatter: "rownum"
+                , hozAlign: "center"
+                , headerSort: false
+                , width: 70
+            },
+            {
+                title: "OrderTxt"
+                , field: "OrderTxt"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "DrawingNo"
+                , field: "DrawingNo"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "ProductName"
+                , field: "ProductName"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "Quantity"
+                , field: "Quantity"
+                , headerSort: false
+                , width: 70
+                , hozAlign: "center"
+                , editor: "number"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    let value = cell.getValue();
+                    return value ? value : 0;
+                }
+                , validator: ["numeric"]
+            },
+            {
+                title: "UnitPrice"
+                , field: "UnitPrice"
+                , headerSort: false
+                , width: 100
+                , hozAlign: "right"
+                , editor: "number"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    var value = cell.getValue();
+                    return value ? "￥" + value.toLocaleString() : "￥0";
+                }
+                , formatterParams: {
+                    decimal: ",",
+                    symbol: "￥",
+                    precision: 0,
+                }
+                , validator: ["numeric"]
+            },
+            {
+                title: "EstimatedAmount"
+                , field: "EstimatedAmount"
+                , headerSort: false
+                , width: 100
+                , hozAlign: "right"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    var value = cell.getValue();
+                    return value ? "￥" + value.toLocaleString() : "￥0";
+                }
+                , formatterParams: {
+                    decimal: ",",
+                    symbol: "￥",
+                    precision: 0,
+                }
+                , validator: ["numeric"]
+                , editor: "number"
+            },
+            {
+                title: "DrawingFileName"
+                , field: "DrawingFileName"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "Remarks"
+                , field: "Remarks"
+                , headerSort: false
+                , editor: true
+                , hozAlign: "left"
+            },
+            {
+                title: "SetFlg"
+                , field: "SetFlg"
+                , headerSort: false
+                , hozAlign: "center"
+                , width: 70
+                , formatter: function (cell, formatterParams) {
+                    return "<input type='checkbox'" + (cell.getValue() == 1 ? " checked" : "") + ">";
+                }
+                , cellMouseDown: function (e, cell) {
+                    cell.setValue(cell.getValue() == 1 ? 0 : 1);
+                }
+            },
+            { title: "Mtmr002Index", field: "Mtmr002Index", headerSort: false, visible: false, clipboard: true },
+        ];
+
+        addBeforeunloadEvent();
+        const tableList = new Tabulator(
+            '#mtmr-list', {
+            layout: 'fitColumns',
+            columns: TABLE_LIST,
+            selectable: false,
+            columnHeaderVertAlign: 'middle',
+            minHeight: 300,
+            pagination: "local",
+            paginationSize: 30,
+        });
+
+        document.addEventListener("DOMContentLoaded", async function (){
+            let dataListFromServer = @Html.Raw(Json.Serialize(Model._MTMRDetailList));
+            await viewDataTableInformation(tableList, dataListFromServer);
+
+        });
+
+        function viewDataTableInformation(_table, _dataList){
+           _table.clearData();
+           let newDataList;
+            if (_dataList.length > 0){
+                newDataList = _dataList.map(item => ({
+                    OrderTxt: item.OrderTxt
+                    , DrawingNo: item.DrawingNo
+                    , ProductName: item.ProductName
+                    , Quantity: item.Quantity
+                    , UnitPrice: item.UnitPrice
+                    , EstimatedAmount: item.EstimatedAmount
+                    , DrawingFileName: item.DrawingFileName
+                    , Remarks: item.Remarks
+                    , SetFlg: item.SetFlg
+                    , Mtmr002Index: item.Mtmr002Index
+                }));
+            }else{
+                newDataList =[{
+                    OrderTxt: ""
+                    , DrawingNo: ""
+                    , ProductName: ""
+                    , Quantity: ""
+                    , UnitPrice: ""
+                    , EstimatedAmount: ""
+                    , DrawingFileName: ""
+                    , Remarks: ""
+                    , SetFlg: '0'
+                    , Mtmr002Index: ""
+                }];
+            }
+            _table.setData(newDataList);
+        };
+
+        function addRowBtnClick(_table) {
+            newaddRow = {
+                OrderTxt: ""
+                , DrawingNo: ""
+                , ProductName: ""
+                , Quantity: ""
+                , UnitPrice: ""
+                , EstimatedAmount: ""
+                , DrawingFileName: ""
+                , Remarks: ""
+                , SetFlg: '0'
+                , Mtmr002Index: ""
+            };
+            _table.addRow(newaddRow);
+        };
+
+        function registBtnClick(){
+            let formData = dataRegistEdit(tableList);
+            //formData.forEach((value, key) => {
+            //    console.log("registBtnClick", key, value);
+            //})
+            checkAndExecution(
+                formData,
+                '@Url.Action("BeforeRegistCheck","MTMR")',
+                '@Url.Action("Regist","MTMR")',
+                '',
+            ).then(json => {
+                console.log("json", json);
+                responseJSONMapItem(json, tableList);
+            }).catch((ex) => {
+                console.log("catch", ex);
+            });
+        };
+
+        // cũng OK
+        function nextpage(){
+            alert("next Page");
+            let formData = dataRegistEdit(tableList);
+            sendAjax(
+                '@Url.Action("NextPageMTMR003","MTMR")',
+                formData,
+            ).then(data => {
+                console.log("data11", data);
+                window.location.href = data.redirectTo;
+            }).catch((ex) => {
+                console.log("catch", ex);
+            });
+        };
+        
+
+        function dataRegistEdit(_table) {
+            let allTableData = _table.getData();
+            let formData = new FormData();
+            formData.append('PageModeFlg', document.getElementById("PageModeFlg").value);
+            //-------------------------------------
+            formData.append('Mtmr001No', document.getElementById("Mtmr001No").value);
+            formData.append('CustomerCd', document.getElementById("CustomerCd").value);
+            formData.append('UserId', document.getElementById("UserId").value);
+            //-------------------------------------
+            formData.append('CustomerAd', document.getElementById("CustomerAd").value);
+            formData.append('CustomerContact', document.getElementById("CustomerContact").value);
+            formData.append('Subject', document.getElementById("Subject").value);
+            formData.append('Deadline', document.getElementById("Deadline").value);
+            formData.append('DeliveryLocation', document.getElementById("DeliveryLocation").value);
+            formData.append('Payment', document.getElementById("Payment").value);
+            formData.append('QuoteExpirationDate', document.getElementById("QuoteExpirationDate").value);
+            //-------------------------------------
+            formData.append('EstimatedTotalAmount', document.getElementById("displayEstimatedTotalAmount").value);
+            formData.append('Discount', document.getElementById("displayDiscount").value);
+            formData.append('EstimatedSubtotalAmount', document.getElementById("displayEstimatedSubtotalAmount").value);
+            //-------------------------------------
+            formData.append('Remarks', document.getElementById("Remarks").value);
+            for (let i = 0; i < allTableData.length; i++){
+                let currentObj = allTableData[i];
+                formData.append('record_list[' + i + '].OrderTxt', currentObj.OrderTxt);
+                formData.append('record_list[' + i + '].DrawingNo', currentObj.DrawingNo);
+                formData.append('record_list[' + i + '].ProductName', currentObj.ProductName);
+                formData.append('record_list[' + i + '].Quantity', currentObj.Quantity);
+                formData.append('record_list[' + i + '].UnitPrice', currentObj.UnitPrice);
+                formData.append('record_list[' + i + '].EstimatedAmount', currentObj.EstimatedAmount);
+                formData.append('record_list[' + i + '].DrawingFileName', currentObj.DrawingFileName);
+                formData.append('record_list[' + i + '].Remarks', currentObj.Remarks);
+                formData.append('record_list[' + i + '].SetFlg', currentObj.SetFlg);
+                formData.append('record_list[' + i + '].Mtmr002Index', currentObj.Mtmr002Index.toString());
+            }
+            return formData;
+        }
+
+        function responseJSONMapItem(_json, _table) {
+            let jsonData = JSON.parse(_json);
+            console.log("jsonData", jsonData);
+
+            document.getElementById("PageModeFlg").value = jsonData._OrthersItems["PageModeFlg"];
+
+            for (let item in jsonData._MTMRInfo) {
+                console.log("jsonData._MTMRInfo", item, jsonData._MTMRInfo[item])
+                let element = document.getElementById(item);
+                if (element !== null) {
+                    element.value = jsonData._MTMRInfo[item];
+                }
+                
+            }
+            let tmpMTMRDetailList = jsonData._MTMRDetailList;
+            console.log("tmpMTMRDetailList", tmpMTMRDetailList)
+            let newDataList = tmpMTMRDetailList.map(item => ({
+                OrderTxt: item.OrderTxt,
+                DrawingNo: item.DrawingNo,
+                ProductName: item.ProductName,
+                Quantity: item.Quantity,
+                UnitPrice: item.UnitPrice,
+                EstimatedAmount: item.EstimatedAmount,
+                DrawingFileName: item.DrawingFileName,
+                Remarks: item.Remarks,
+                SetFlg: item.SetFlg,
+                Mtmr002Index: item.Mtmr002Index
+            }));
+            _table.setData(newDataList);
+
+         }
+
+
+
+
+
+
+
+
+    
+    </script>
+}

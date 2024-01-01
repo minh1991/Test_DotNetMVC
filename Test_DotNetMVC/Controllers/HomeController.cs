@@ -34,37 +34,13 @@ namespace Test_DotNetMVC.Controllers
         {
             HttpContext.Session.SetString("Address", "A001");
             await HttpContext.Session.CommitAsync();
-            return RedirectToAction("Index", "Users");
+            return RedirectToAction("Index", "Tablelayout");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        //set vào session
-
-
-        public void Set<T>(string key, T item)
-        {
-            // Jsonserialli
-            //var str = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-            // JsonSerializer.SerializeToUtf8ytytes(item)
-            HttpContext.Session.SetString(key, item.ToString());
-        }
-
-        // get session 
-
-        public void getSession(string key)
-        {
-            var item = HttpContext.Session.Get(key);
-            // var utf8Reader = new Utf8JsonReader(item);
-            // return JsonSerialize.Deserialize<T>(ref utf8Reader);
-
-            //var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonString);
-
-            //var a = Session[key];
         }
     }
 }

@@ -1,0 +1,76 @@
+﻿@model Test_DotNetMVC.Models.ResponseModel.MTMR003Model
+@{
+    ViewData["Title"] = "MTMR";
+}
+<h1>MTMR Content</h1>
+<partial name="_Info" model="@Model._MTMRInfo" />
+<partial name="_header" model="@Model._MTMRInfo" />
+<partial name="_Comment" />
+<partial name="_Button" />
+
+@section Scripts{
+    <script type="text/javascript">
+        addBeforeunloadEvent();
+        document.addEventListener("DOMContentLoaded", async function () {
+            let dataListFromServer = @Html.Raw(Json.Serialize(Model._MTMRComment));
+            await viewCommentInformation(dataListFromServer);
+
+        });
+
+        function viewCommentInformation(_dataList) {
+            console.log("_dataList", _dataList);
+            let tmpTextarea = document.getElementById('Comment');
+            _dataList.forEach(function (item) {
+                var lineNo = item.lineNo || 0;
+                var content = item.content || '';
+                tmpTextarea.value += lineNo + '. ' + content + '\n';
+            });
+        }
+
+        function registBtnClick(){
+            let formData = dataRegistEdit();
+            //formData.forEach((value, key) => {
+            //    console.log("registBtnClick", key, value);
+            //})
+            checkAndExecution(
+                formData,
+                '@Url.Action("BeforeRegistCheck","MTMR003")',
+                '@Url.Action("Regist","MTMR003")',
+                '',
+            ).then(json => {
+                console.log("json", json);
+                //responseJSONMapItem(json, tableList);
+            }).catch((ex) => {
+                console.log("catch", ex);
+            });
+        }
+
+        function dataRegistEdit(){
+            let formData = new FormData();
+            formData.append('Mtmr001No', document.getElementById("Mtmr001No").value);
+            formData.append('CustomerCd', document.getElementById("CustomerCd").value);
+            formData.append('UserId', document.getElementById("UserId").value);
+            //-------------------------------------
+            formData.append('CustomerAd', document.getElementById("CustomerAd").value);
+            formData.append('CustomerContact', document.getElementById("CustomerContact").value);
+            formData.append('Subject', document.getElementById("Subject").value);
+            formData.append('Deadline', document.getElementById("Deadline").value);
+            formData.append('DeliveryLocation', document.getElementById("DeliveryLocation").value);
+            formData.append('Payment', document.getElementById("Payment").value);
+            formData.append('QuoteExpirationDate', document.getElementById("QuoteExpirationDate").value);
+
+            let tmpTextarea = document.getElementById('Comment').value.trim();
+            var contentLine = tmpTextarea.split('\n');
+            //console.log("lincontentLinees", contentLine);
+            if (contentLine.length > 0) {
+                for (let i = 0; i < contentLine.length; i++) {
+                    formData.append('_MTMRComment[' + i + '].LineNo', i + 1);
+                    formData.append('_MTMRComment[' + i + '].Content', contentLine[i]);
+                }
+            }
+            return formData;
+        }
+
+
+    </script>
+}

@@ -1,0 +1,206 @@
+﻿<div class="card">
+    <div class="card-header fs-5 card-collapse" data-bs-toggle="collapse" href="#collapseMitsumoriInfo" aria-expanded="false" aria-controls="collapseMitsumoriInfo">MTMR_Header</div>
+    <div class="collapse show" id="collapseMitsumoriInfo">
+        <div class="card-body">
+            <div id="table-layout"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        const TABLE_LIST = [
+            {
+                title: "No"
+                , field: "No"
+                , formatter: "rownum"
+                , hozAlign: "center"
+                , headerSort: false
+                , width: 50
+                , frozen: true
+            }, 
+            {
+                title: "OrderTxt"
+                , field: "OrderTxt"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+                , frozen: true
+                , width: 150
+            },
+            {
+                title: "DrawingNo"
+                , field: "DrawingNo"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+                , frozen: true
+                , width: 150
+            },
+            {
+                title: "ProductName"
+                , field: "ProductName"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+                , frozen: true
+                , width: 150
+            },
+            {
+                title: "Process", field: "Process", headerHozAlign: "center",
+                columns:[
+                    { title: "A01", field: "A01", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A02", field: "A02", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A03", field: "A03", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A04", field: "A04", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A05", field: "A05", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A06", field: "A06", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A07", field: "A07", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A08", field: "A08", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A09", field: "A09", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A10", field: "A10", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A11", field: "A11", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A12", field: "A12", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A13", field: "A13", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A14", field: "A14", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A15", field: "A15", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A16", field: "A16", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A17", field: "A17", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A18", field: "A18", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A19", field: "A19", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                    { title: "A20", field: "A20", width: 70 , headerSort: false , headerHozAlign: "center" , hozAlign: "center", formatter: function (e, cell) { setBackgroud(tableList, e, cell) } },
+                ]
+            }
+            
+            
+        ];
+        addBeforeunloadEvent();
+        const tableList = new Tabulator(
+            '#table-layout', {
+            layout: 'fitColumns',
+            columns: TABLE_LIST,
+            selectable: false,
+            columnHeaderVertAlign: 'middle',
+            minHeight: 300,
+            pagination: "local",
+            paginationSize: 30,
+        });
+        const sampleData = [
+            {
+                OrderTxt: "OrderTxt1"
+                , DrawingNo: "DrawingNo1"
+                , ProductName: "ProductName1"
+                , A01  : "X"
+                , A02  : "X"
+                , A03  : "X"
+                , A04  : "X"
+                , A05  : "X"
+                , A06  : "X"
+                , A07  : "X"
+                , A08  : "X"
+                , A09  : "X"
+                , A10  : "X"
+                , A11  : "X"
+                , A12  : ""
+                , A13  : ""
+                , A14  : ""
+                , A15  : ""
+                , A16  : ""
+                , A17  : ""
+                , A18  : ""
+                , A19  : ""
+                , A20  : ""
+            },
+            {
+                OrderTxt: "OrderTxt2"
+                , DrawingNo: "DrawingNo2"
+                , ProductName: "ProductName2"
+                , A01: "X"
+                , A02: "X"
+                , A03: "X"
+                , A04: "X"
+                , A05: "X"
+                , A06: "X"
+                , A07: ""
+                , A08: ""
+                , A09: ""
+                , A10: ""
+                , A11: ""
+                , A12: ""
+                , A13: ""
+                , A14: ""
+                , A15: ""
+                , A16: ""
+                , A17: ""
+                , A18: ""
+                , A19: ""
+                , A20: ""
+            }
+            ,
+            {
+                OrderTxt: "OrderTxt3"
+                , DrawingNo: "DrawingNo3"
+                , ProductName: "ProductName3"
+                , A01: "X"
+                , A02: "X"
+                , A03: "X"
+                , A04: ""
+                , A05: ""
+                , A06: ""
+                , A07: ""
+                , A08: "X"
+                , A09: "X"
+                , A10: "X"
+                , A11: ""
+                , A12: ""
+                , A13: ""
+                , A14: ""
+                , A15: ""
+                , A16: ""
+                , A17: ""
+                , A18: ""
+                , A19: ""
+                , A20: ""
+            }
+        ]
+        document.addEventListener("DOMContentLoaded", async function () {
+            await viewDataTableInformation(tableList, sampleData);
+        });
+
+        function viewDataTableInformation(_table, _dataList){
+            _table.clearData();
+            let newDataList = _dataList.map(item => ({
+                OrderTxt: item.OrderTxt
+                , DrawingNo: item.DrawingNo
+                , ProductName: item.ProductName
+                , A01: item.A01
+                , A02 : item.A02
+                , A03 : item.A03
+                , A04 : item.A04
+                , A05 : item.A05
+                , A06 : item.A06
+                , A07 : item.A07
+                , A08 : item.A08
+                , A09 : item.A09
+                , A10 : item.A10
+                , A11 : item.A11
+                , A12 : item.A12
+                , A13 : item.A13
+                , A14 : item.A14
+                , A15 : item.A15
+                , A16 : item.A16
+                , A17 : item.A17
+                , A18 : item.A18
+                , A19 : item.A19
+                , A20 : item.A20
+
+            }));
+            _table.setData(newDataList);
+        }
+
+        function setBackgroud(tableList, e, cell) {
+            console.log("setBackgroud", tableList, e, cell)
+        }
+
+    </script>
+}
