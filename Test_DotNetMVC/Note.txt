@@ -1,0 +1,67 @@
+﻿
+********** REGEX **********
+
+phoneNumber Regex CHECK
+→	^(?:\d{10}|\d{3}-\d{3}-\d{4}|\d{2}-\d{4}-\d{4}|\d{3}-\d{4}-\d{4})$
+
+***************************
+
+********** FUNCTION **********
+INPUT "1"	OUTPUT "001"
+INPUT "11"	OUTPUT "011"
+INPUT "111"	OUTPUT "111"
+		public static string ConvertNumber(string input)
+		{
+			if (string.IsNullOrEmpty(input))
+			{
+				return string.Empty;
+			}
+
+			// Kiểm tra xem chuỗi có thể được chuyển đổi thành số nguyên hay không
+			if (int.TryParse(input, out int number))
+			{
+				return number.ToString("000");
+			}
+			else
+			{
+				// Nếu không thể chuyển đổi thành số nguyên, giữ nguyên chuỗi
+				return input;
+			}
+		}
+
+Convert PhoneNumber
+INPUT "55555555555"	OUTPUT "555-5555-5555"
+INPUT "5555555555"	OUTPUT "555-5555-555"
+		<<	C# >>
+		public static string FormatPhoneNumber(string phoneNumber)
+        {
+            if (string.IsNullOrEmpty(phoneNumber))
+            {
+                return string.Empty;
+            }
+            string numericPart = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+            if (numericPart.Length < 10)
+            {
+                return phoneNumber;
+            }
+            return string.Format("{0}-{1}-{2}",
+                numericPart.Substring(0, 3),
+                numericPart.Substring(3, 4),
+                numericPart.Substring(7));
+        }
+
+		<<	JS >>
+		function formatPhoneNumber(phoneNumber) {
+            var numericPart = phoneNumber.replace(/\D/g, '');
+            if (numericPart.length < 10) {
+                return phoneNumber;
+            }
+            if (numericPart.length === 10) {
+                return numericPart.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            } else {
+                return numericPart.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+            }
+        }
+******************************
+
