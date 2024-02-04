@@ -41,22 +41,20 @@ function sendAjax(url, formData = null, contentType = null) {
             headers.set('Content-Type', contentType);
         }
         headers.set('X-Requested-With', 'XMLHttpRequest');
-        
         fetch(url, {
             method: 'POST',
             headers,
             body: formData
 
         }).then(response => {
-            
             if (!response.ok) {
                 window.removeEventListener('beforeunload', cancelEvent);
                 throw new Error('Ajax error');
             }
             let contentType = response.headers.get('content-type');
-            console.log("contentType", contentType)
+            
             if (contentType.match('json')) {
-                console.log("contentType", contentType);
+                
                 return response.json();
             } else if (contentType.match('text/csv') ||
                 contentType.match('application/pdf') ||
@@ -82,7 +80,6 @@ function sendAjax(url, formData = null, contentType = null) {
                 reject();
                 return;
             }
-            console.log("data", data);
             resolve(data);
 
         }).catch(exception => {

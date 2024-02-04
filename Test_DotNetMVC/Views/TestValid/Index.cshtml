@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Validate";
+}
+<div class="card">
+    <div class="card-header fs-5 card-collapse" data-bs-toggle="collapse" href="#collapseMitsumoriInfo" aria-expanded="false" aria-controls="collapseMitsumoriInfo">MTMR_Header</div>
+    <div class="collapse show" id="collapseMitsumoriInfo">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">必須チェック</span>
+                    <input type="text" class="form-control" id="HissuChk" value="a">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">テキスト長さチェック</span>
+                    <input type="text" class="form-control" id="TxtLenghtChk">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">全角チェック</span>
+                    <input type="text" class="form-control" id="ZenkakuChk">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">半角チェック</span>
+                    <input type="text" class="form-control" id="HankakuChk">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">数値チェック</span>
+                    <input type="text" class="form-control" id="NumberChk">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">日時チェック</span>
+                    <input type="text" class="form-control" id="DateTimeChk">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">日時範囲内チェック</span>
+                    <input type="text" class="form-control" id="GreaterDateChkStart">
+                    ～
+                    <input type="text" class="form-control" id="GreaterDateChkEnd">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">郵便番号チェック</span>
+                    <input type="text" class="form-control" id="JPYubinBangoChk">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">電話番号チェック</span>
+                    <input type="text" class="form-control" id="PhoneNumberChk" onkeypress="return phoneNumberInput(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-6 text-start">
+                <input type="button" class="btn btn-warning" id="check-button" value="　関数でチェック　" onclick="functionCheckBtnClick();" />
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+        /**
+         * チェック
+         */
+        function functionCheckBtnClick() {
+            let formData = dataRegistEdit();
+            sendAjax(
+                '@Url.Action("TestCheckByFunction","TestValid")',
+                formData,
+            ).then(data => {
+                console.log("functionCheckBtnClick", data);
+                alert(data.title)
+            }).catch((ex) => {
+                console.log("catch", ex);
+            });
+        };
+
+        function dataRegistEdit() {
+            let formData = new FormData();
+            formData.append('HissuChk', document.getElementById("HissuChk").value);
+            formData.append('TxtLenghtChk', document.getElementById("TxtLenghtChk").value);
+            formData.append('ZenkakuChk', document.getElementById("ZenkakuChk").value);
+            formData.append('HankakuChk', document.getElementById("HankakuChk").value);
+            formData.append('NumberChk', document.getElementById("NumberChk").value);
+            formData.append('DateTimeChk', document.getElementById("DateTimeChk").value);
+            formData.append('GreaterDateChkStart', document.getElementById("GreaterDateChkStart").value);
+            formData.append('GreaterDateChkEnd', document.getElementById("GreaterDateChkEnd").value);
+            formData.append('JPYubinBangoChk', document.getElementById("JPYubinBangoChk").value);
+            formData.append('PhoneNumberChk', document.getElementById("PhoneNumberChk").value);
+            
+            
+            return formData;
+        }
+
+        function phoneNumberInput(event) {
+            var charCode = (event.which) ? event.which : event.keyCode;
+            if ((charCode >= 48 && charCode <= 57) || charCode === 45) {
+                return true;
+            }
+            return false;
+        }
+
+
+
+
+    </script>
+}
