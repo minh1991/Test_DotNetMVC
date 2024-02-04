@@ -256,6 +256,25 @@ namespace Test_DotNetMVC.Controllers
             });
         }
 
+        [HttpPost]
+        public IActionResult TestCheckByAttribute(TestValidModelByAttribute model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errorMsg = ModelState.Select(e => e.Value!.Errors).First(y => y.Count > 0)[0].ErrorMessage;
+                return Json(new JsonResultModel
+                {
+                    Title = MessageUtil.MSG001E(errorMsg),
+                    Type = JsonResultModel.MessageTypeEnum.error.ToString(),
+                });
+            }
+            return Json(new JsonResultModel
+            {
+                Title = MessageUtil.MSG001(),
+                Type = JsonResultModel.MessageTypeEnum.success.ToString(),
+            });
+        }
+
         #region GetPropertyValue
         /// <summary>
         /// プロパティの値を取得します。

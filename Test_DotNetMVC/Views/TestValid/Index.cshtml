@@ -53,6 +53,7 @@
         <div class="row g-3">
             <div class="col-6 text-start">
                 <input type="button" class="btn btn-warning" id="check-button" value="　関数でチェック　" onclick="functionCheckBtnClick();" />
+                <input type="button" class="btn btn-warning" id="check-button" value="　属性でチェック　" onclick="attributeCheckBtnClick();" />
             </div>
         </div>
     </div>
@@ -70,6 +71,19 @@
                 formData,
             ).then(data => {
                 console.log("functionCheckBtnClick", data);
+                alert(data.title)
+            }).catch((ex) => {
+                console.log("catch", ex);
+            });
+        };
+
+        function attributeCheckBtnClick(){
+            let formData = dataRegistEdit();
+            sendAjax(
+                '@Url.Action("TestCheckByAttribute","TestValid")',
+                formData,
+            ).then(data => {
+                console.log("attributeCheckBtnClick", data);
                 alert(data.title)
             }).catch((ex) => {
                 console.log("catch", ex);
