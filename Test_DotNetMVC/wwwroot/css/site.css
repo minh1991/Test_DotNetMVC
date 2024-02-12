@@ -16,3 +16,9 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.link-text {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}

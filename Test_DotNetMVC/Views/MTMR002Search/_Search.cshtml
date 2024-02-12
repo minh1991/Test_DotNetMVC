@@ -1,0 +1,26 @@
+﻿@model Test_DotNetMVC.Models.Entities.MTMR002SearchModel.SearchItem
+<div class="card mb-2">
+    <div class="card-header fs-5 card-collapse" data-bs-toggle="collapse" href="#collapseSearch" aria-expanded="false" aria-controls="collapseSearch">検索条件</div>
+    <div class="collapse show" id="collapseSearch">
+        <div class="card-body">
+            <form method="post" id="search-form" asp-antiforgery="true">
+                <div class="row g-3">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">OrderTxt</span>
+                        <input type="text" class="form-control" id="OrderTxt" asp-for="OrderTxt">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">ProductName</span>
+                        <input type="text" class="form-control" id="ProductName" asp-for="ProductName">
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label">　</label>
+                        <div class="form-control p-0 border-0">
+                            <input type="button" class="btn btn-primary" value="　検索　" onclick="javascript:search();" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

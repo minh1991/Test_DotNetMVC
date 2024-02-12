@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Test_DotNetMVC.Model.Entities
 {
     public partial class TProduct
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int? ProductCategoryId { get; set; }
-        public string? ProductCode { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public string? Detail { get; set; }
@@ -22,10 +17,6 @@ namespace Test_DotNetMVC.Model.Entities
         public string? SeoTitle { get; set; }
         public string? SeoDescription { get; set; }
         public string? SeoKeyWords { get; set; }
-        public bool IsHome { get; set; }
-        public bool IsSale { get; set; }
-        public bool IsFeature { get; set; }
-        public bool IsHot  { get; set; }
         public DateTime? InsDate { get; set; }
         public string? InsUser { get; set; }
         public string? InsCd { get; set; }

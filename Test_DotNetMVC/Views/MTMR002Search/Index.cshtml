@@ -1,0 +1,254 @@
+﻿@model Test_DotNetMVC.Models.Entities.MTMR002SearchModel
+@{
+    ViewData["Title"] = "MTMR002Search";
+}
+<section id="search-section">
+    <partial name="_Search" model="@Model.Search" />
+</section>
+<partial name="_List" />
+<section id="input-section">
+    <partial name="_Input" model="@Model.Input" />
+</section>
+
+@section Scripts{
+    <script>
+        const MTMR002_TABLE =[
+            {
+                title: "No"
+                , field: "no"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    var rowNumber = cell.getRow().getPosition();
+                    return "<span class='link-text'>" + rowNumber + "</span>";
+                }
+                , hozAlign: "center"
+                , headerSort: false
+                , width: 50
+                , cellClick: function (e, cell) { updateDataModal(cell); }
+                        
+            },
+            {
+                title: "Mtmr002No"
+                , field: "mtmr002No"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "Mtmr002Index"
+                , field: "mtmr002Index"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "OrderTxt"
+                , field: "orderTxt"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "DrawingNo"
+                , field: "drawingNo"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "ProductName"
+                , field: "productName"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "Quantity"
+                , field: "quantity"
+                , headerSort: false
+                , width: 70
+                , hozAlign: "center"
+                , editor: "number"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    let value = cell.getValue();
+                    return value ? value : 0;
+                }
+                , validator: ["numeric"]
+            },
+            {
+                title: "UnitPrice"
+                , field: "unitPrice"
+                , headerSort: false
+                , width: 100
+                , hozAlign: "right"
+                , editor: "number"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    var value = cell.getValue();
+                    return value ? "￥" + value.toLocaleString() : "￥0";
+                }
+                , formatterParams: {
+                    decimal: ",",
+                    symbol: "￥",
+                    precision: 0,
+                }
+                , validator: ["numeric"]
+            },
+            {
+                title: "EstimatedAmount"
+                , field: "estimatedAmount"
+                , headerSort: false
+                , width: 100
+                , hozAlign: "right"
+                , formatter: function (cell, formatterParams, onRendered) {
+                    var value = cell.getValue();
+                    return value ? "￥" + value.toLocaleString() : "￥0";
+                }
+                , formatterParams: {
+                    decimal: ",",
+                    symbol: "￥",
+                    precision: 0,
+                }
+                , validator: ["numeric"]
+                , editor: "number"
+            },
+            {
+                title: "DrawingFileName"
+                , field: "drawingFileName"
+                , headerSort: false
+                , hozAlign: "left"
+                , editor: true
+            },
+            {
+                title: "Remarks"
+                , field: "remarks"
+                , headerSort: false
+                , editor: true
+                , hozAlign: "left"
+            },
+            {
+                title: "SetFlg"
+                , field: "setFlg"
+                , headerSort: false
+                , hozAlign: "center"
+                , width: 70
+                , formatter: function (cell, formatterParams) {
+                    return "<input type='checkbox'" + (cell.getValue() == 1 ? " checked" : "") + ">";
+                }
+                , cellMouseDown: function (e, cell) {
+                    cell.setValue(cell.getValue() == 1 ? 0 : 1);
+                }
+            },
+            
+        ]
+        let table = new Tabulator(
+            '#MTMR002-list',
+            {
+                layout: 'fitColumns',
+                columns: MTMR002_TABLE,
+                selectable: false,
+                columnHeaderVertAlign: 'middle',
+                minHeight: 300,
+                pagination: "local",
+                paginationSize: 30,
+            });
+
+        function search() {
+            sendAjax(
+                '@Url.Action("Search","MTMR002Search")',
+                makeFormData(document.forms['search-form']),
+            ).then(data => {
+                tabulatorOrRefresh(data, 'search-section', table);
+            }).catch(() => {
+                // 特に何もしない
+            });
+        };
+
+        function updateDataModal(_cell) {
+            let formData = formDataEdit(_cell);
+            sendAjax(
+                '@Url.Action("GetMtmr002Data","MTMR002Search")',
+                formData
+            ).then(data => {
+                if (data.result) {
+                    TOAST.fire({
+                        icon: data.type,
+                        title: data.title,
+                        html: data.message,
+                    });
+                } else {
+                    document.getElementById('input-section').innerHTML = data;
+                    let inputModal = new bootstrap.Modal(document.getElementById('inputModal'));
+                    inputModal.show();
+                    document.getElementById('inp_Mtmr002No').disabled = true;
+                    document.getElementById('inp_Mtmr002Index').disabled = true;
+                }
+            }).catch(() => {
+                // 特に何もしない
+            });
+        }
+
+        function newDataModal() {
+            sendAjax(
+                '@Url.Action("newMtmr002Data","MTMR002Search")',
+                null
+            ).then(data => {
+                if (data.result) {
+                    TOAST.fire({
+                        icon: data.type,
+                        title: data.title,
+                        html: data.message,
+                    });
+                } else {
+                    document.getElementById('input-section').innerHTML = data;
+                    let inputModal = new bootstrap.Modal(document.getElementById('inputModal'));
+                    inputModal.show();
+                    document.getElementById('inp_Mtmr002No').disabled = false;
+                    document.getElementById('inp_Mtmr002Index').disabled = false;
+                }
+            }).catch(() => {
+                // 特に何もしない
+            });
+        }
+
+        function regist(){
+            let formData = makeFormData(document.forms['input-form'])
+            //formData.forEach((value, key) => {
+            //    console.log("regist", key, value);
+            //})
+            checkAndExecution(
+                formData,
+                '@Url.Action("BeforeRegistCheck","MTMR002Search")',
+                '@Url.Action("Regist","MTMR002Search")',
+                'input-section',
+            ).then(json => {
+                //$("#inputModal").removeClass("in");
+                //$(".modal-backdrop").remove();
+                //$("#inputModal").hide();
+                let inputModal = document.getElementById('inputModal');
+                if (inputModal) {
+                    inputModal.classList.remove('in');
+                    let modalBackdrop = document.querySelector('.modal-backdrop');
+                    if (modalBackdrop) {
+                        modalBackdrop.remove();
+                        inputModal.style.display = 'none';
+                    }
+                }
+                console.log("regist", json);
+                // tabulor reset
+                //table.replaceData(json);
+                //tableResize(table);
+            }).catch((ex) => {
+                console.log("catch", ex);
+            });
+        };
+
+        function formDataEdit(_cell) {
+            let formData = new FormData();
+            let rowData = _cell.getRow().getData();
+            formData.append('Mtmr002No', rowData.mtmr002No);
+            formData.append('Mtmr002Index', rowData.mtmr002Index);
+
+            return formData;
+        }
+
+    </script>
+}

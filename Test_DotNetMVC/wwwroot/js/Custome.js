@@ -110,3 +110,78 @@ function makeSystemErrorUrl(stackTrace, exceptionMessage = null) {
         `/Error?exceptionMessage=Ajax errors.&stackTrace=${stackTrace}` :
         `/Error?exceptionMessage=${exceptionMessage}&stackTrace=${stackTrace}`;
 }
+
+function makeFormData(formElement) {
+    let target = [];
+    [...formElement].forEach(e => {
+        if (e.disabled) {
+            target.push(e.id);
+            e.removeAttribute('disabled');
+        }
+    });
+    let formData = new FormData(formElement);
+    [...formElement].forEach(e => {
+        if (target.includes(e.id)) {
+            e.setAttribute('disabled', '');
+        }
+    });
+
+    return formData;
+}
+
+function tabulatorOrRefresh(data, refreshElementId, tabulatorInstance) {
+    if (data.result) {
+        tabulatorInstance.replaceData(data.json);
+        tableResize(tabulatorInstance);
+    } else {
+        document.getElementById(refreshElementId).innerHTML = data;
+        firstIsInvalidFocus();
+        beFlatpickr();
+    }
+}
+
+function toastOrRefresh(data, refreshElementId) {
+    if (data.result) {
+        TOAST.fire({
+            icon: data.type,
+            title: data.title,
+            html: data.message,
+        });
+    } else {
+        document.getElementById(refreshElementId).innerHTML = data;
+        firstIsInvalidFocus();
+        beFlatpickr();
+    }
+}
+function firstIsInvalidFocus() {
+    let isInvalidElements = document.querySelectorAll(':not(div).is-invalid,.is-invalid input');
+    if (0 < isInvalidElements.length) {
+        isInvalidElements[0].focus();
+    }
+}
+function beFlatpickr() {
+    let fp = flatpickr('.flatpickr', FLATPICKR);
+    flatpickrAddEvent(fp);
+    let fpm = flatpickr('.flatpickr-ym', FLATPICKR_YM);
+    flatpickrAddEvent(fpm);
+}
+function flatpickrAddEvent(flatpickrInstance) {
+    let fp;
+    if (typeof flatpickrInstance.forEach === 'function') {
+        fp = flatpickrInstance;
+    } else {
+        fp = [flatpickrInstance];
+    }
+
+    fp.forEach(item => {
+        item.altInput.addEventListener('focus', e => {
+            selectTextAll(e);
+        });
+        if (item.input.classList.contains('is-invalid')) {
+            item.altInput.classList.add('is-invalid');
+        }
+    });
+}
+function selectTextAll(e) {
+    e.target.select();
+}

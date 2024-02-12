@@ -1,0 +1,72 @@
+﻿@model Test_DotNetMVC.Models.Entities.MTMR002SearchModel.InputItem
+
+@* 入力項目 *@
+<div class="modal fade" id="inputModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inputModalLabel">入力</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <form id="input-form">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Mtmr002No</span>
+                            <input type="text" class="form-control" id="inp_Mtmr002No" asp-for="Mtmr002No">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Mtmr002Index</span>
+                            <input type="text" class="form-control" id="inp_Mtmr002Index" asp-for="Mtmr002Index">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">OrderTxt</span>
+                            <input type="text" class="form-control" id="inp_OrderTxt" asp-for="OrderTxt">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">DrawingNo</span>
+                            <input type="text" class="form-control" id="inp_DrawingNo" asp-for="DrawingNo">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">ProductName</span>
+                            <input type="text" class="form-control" id="inp_ProductName" asp-for="ProductName">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Quantity</span>
+                            <input type="text" class="form-control" id="inp_Quantity" asp-for="Quantity">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">UnitPrice</span>
+                            <input type="text" class="form-control" id="inp_UnitPrice" asp-for="UnitPrice">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">EstimatedAmount</span>
+                            <input type="text" class="form-control" id="inp_EstimatedAmount" asp-for="EstimatedAmount">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">DrawingFileNo</span>
+                            <input type="text" class="form-control" id="inp_DrawingFileNo" asp-for="DrawingFileNo">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">DrawingFileName</span>
+                            <input type="text" class="form-control" id="inp_DrawingFileName" asp-for="DrawingFileName">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Remarks</span>
+                            <input type="text" class="form-control" id="inp_Remarks" asp-for="Remarks">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">SetFlg</span>
+                            <input type="text" class="form-control" id="inp_SetFlg" asp-for="SetFlg" type="checkbox">
+                        </div>
+
+                        <input type="hidden" class="form-control" id="inp_RegistMode" asp-for="RegistMode">
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-primary" id="regist-button" value="　登録　" onclick="javascript:regist()" />
+            </div>
+        </div>
+    </div>
+</div>

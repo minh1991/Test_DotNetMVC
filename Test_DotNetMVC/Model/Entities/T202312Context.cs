@@ -37,7 +37,16 @@ namespace Test_DotNetMVC.Model.Entities
         public virtual DbSet<TProductCategory> TProductCategories { get; set; } = null!;
         public virtual DbSet<TSubscrice> TSubscrices { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<VMtmr002List> VMtmr002Lists { get; set; } = null!;
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Data Source=LAPTOP-Q2C2TQ93;Initial Catalog=T202312;Integrated Security=True;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -828,6 +837,40 @@ namespace Test_DotNetMVC.Model.Entities
                     .IsFixedLength();
 
                 entity.Property(e => e.UpdateDateTime).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<VMtmr002List>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("v_mtmr002_list");
+
+                entity.Property(e => e.DelFlg)
+                    .HasMaxLength(1)
+                    .IsFixedLength();
+
+                entity.Property(e => e.DrawingFileName).HasMaxLength(50);
+
+                entity.Property(e => e.DrawingFileNo)
+                    .HasMaxLength(5)
+                    .IsFixedLength();
+
+                entity.Property(e => e.DrawingNo).HasMaxLength(50);
+
+                entity.Property(e => e.Mtmr002Index).HasColumnName("MTMR002_Index");
+
+                entity.Property(e => e.Mtmr002No)
+                    .HasMaxLength(10)
+                    .HasColumnName("MTMR002_no")
+                    .IsFixedLength();
+
+                entity.Property(e => e.OrderTxt).HasMaxLength(50);
+
+                entity.Property(e => e.ProductName).HasMaxLength(50);
+
+                entity.Property(e => e.SetFlg)
+                    .HasMaxLength(1)
+                    .IsFixedLength();
             });
 
             OnModelCreatingPartial(modelBuilder);

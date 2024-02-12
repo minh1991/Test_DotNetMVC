@@ -4,7 +4,7 @@ namespace Test_DotNetMVC.Utils
 {
     public class CommonUtil
     {
-        public string forFrontJson<T>(List<T> list)
+        public static string forFrontJson<T>(List<T> list)
         {
             return JsonSerializer.Serialize(
                 list,
