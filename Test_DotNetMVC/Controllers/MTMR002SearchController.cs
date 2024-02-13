@@ -148,7 +148,12 @@ namespace Test_DotNetMVC.Controllers
             });
         }
 
-
+        public IActionResult TestViewPDF()
+        {
+            return File(System.IO.File.ReadAllBytes($@"Temp\\UploadFiles\\testExport.pdf")
+                , "application/pdf"
+                , "testExport");
+        }
 
 
     }
