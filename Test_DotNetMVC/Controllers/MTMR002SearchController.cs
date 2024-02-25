@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq;
 using System.Text.Json;
+using System.Web.WebPages;
 using Test_DotNetMVC.Extensions;
 using Test_DotNetMVC.Model.Entities;
 using Test_DotNetMVC.Models.Entities;
@@ -17,9 +20,11 @@ namespace Test_DotNetMVC.Controllers
     {
         //private readonly T202312Context _db;
         private T202312Context _db { get; set; }
-        public MTMR002SearchController(T202312Context db)
+        private IConfiguration _configuration { get; set; }
+        public MTMR002SearchController(T202312Context db, IConfiguration configuration)
         {
             _db = db;
+            _configuration = configuration;
         }
         public IActionResult Index()
         {
@@ -153,6 +158,61 @@ namespace Test_DotNetMVC.Controllers
             return File(System.IO.File.ReadAllBytes($@"Temp\\UploadFiles\\testExport.pdf")
                 , "application/pdf"
                 , "testExport");
+        }
+
+        [HttpPost]
+        public IActionResult ExportExcel()
+        {
+            List<VMtmr002List> list = _db.VMtmr002Lists.ToList();
+            list = list
+                .Where(u => u.Mtmr002No.Trim() == "1")
+                .OrderBy(u => u.Mtmr002No)
+                .ThenBy(u => u.Mtmr002Index)
+                .ToList();
+            string _temporayFolder = _configuration.GetValue<string>("FilePosition:EXPORTFILE");
+            string _templateFolder = _configuration.GetValue<string>("OutputFileSettings:TemplateFolder");
+            string _templateFile = _configuration.GetValue<string>("OutputFileSettings:TESTEXCEL_TEMP");
+
+            string templateFilePath = Path.Combine(_templateFolder, $@"{_templateFile}.xlsx");
+            using (var workbook = new XLWorkbook(templateFilePath))
+            {
+                var worksheet = workbook.Worksheet("sheetTest");
+                // Hearder
+                //B5
+                int startRowHeader = 5;
+                foreach (var item in list)
+                {
+                    if (startRowHeader > 4 && startRowHeader < 6)
+                    {
+                        worksheet.Cell(startRowHeader, 2).Value = item.Mtmr002No;
+                    }
+                }
+
+                // Body Table List
+                // A10 B10 C10 D10 E10 F10 G10
+                int startRowBody = 10;
+                foreach (var item in list)
+                {
+                    worksheet.Cell(startRowBody, 1).Value = item.Mtmr002Index;
+                    worksheet.Cell(startRowBody, 2).Value = item.OrderTxt;
+                    worksheet.Cell(startRowBody, 3).Value = item.DrawingNo;
+                    worksheet.Cell(startRowBody, 4).Value = item.ProductName;
+                    worksheet.Cell(startRowBody, 5).Value = item.Quantity;
+                    worksheet.Cell(startRowBody, 6).Value = item.UnitPrice;
+                    worksheet.Cell(startRowBody, 7).Value = item.EstimatedAmount;
+                    startRowBody++;
+                }
+
+                string exportFileName = $"Export_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                string exportFilePath = Path.Combine(_temporayFolder, $@"EXCEL\\{exportFileName}");
+                workbook.SaveAs(exportFilePath);
+            }
+
+            return Json(new JsonResultModel
+            {
+                Title = MessageUtil.MSG001(),
+                Type = JsonResultModel.MessageTypeEnum.question.ToString(),
+            });
         }
 
 

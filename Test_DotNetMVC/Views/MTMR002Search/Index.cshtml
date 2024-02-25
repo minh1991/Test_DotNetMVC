@@ -11,6 +11,7 @@
 </section>
 
 <input type="button" class="btn btn-primary" id="regist-button" value="　TestViewPDF　" onclick="javascript:testViewPDF()" />
+<input type="button" class="btn btn-primary" id="regist-button" value="　EXCEL　" onclick="javascript:ExportExcel()" />
 
 @section Scripts{
     <script>
@@ -283,6 +284,17 @@
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.getElementById('file-view').remove();
+            }).catch(() => {
+                // 特に何もしない
+            });
+        }
+
+        function ExportExcel(){
+            sendAjax(
+                '@Url.Action("ExportExcel","MTMR002Search")',
+                null
+            ).then(data => {
+                console.log("ExportExcel", data);
             }).catch(() => {
                 // 特に何もしない
             });
