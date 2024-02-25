@@ -215,6 +215,107 @@ namespace Test_DotNetMVC.Controllers
             });
         }
 
+        [HttpPost]
+        public IActionResult ExportCSV()
+        {
+            List<VMtmr002List> list = _db.VMtmr002Lists.ToList();
+            list = list
+                .Where(u => u.Mtmr002No.Trim() == "1")
+                .OrderBy(u => u.Mtmr002No)
+                .ThenBy(u => u.Mtmr002Index)
+                .ToList();
+            string csv = string.Empty;
+            //Header
+            string[] headerNames = new string[]
+            {
+                "Mtmr002No"
+                ,"Mtmr002Index"
+                ,"OrderTxt"
+                ,"DrawingNo"
+                ,"ProductName"
+                ,"Quantity"
+                ,"UnitPrice"
+                ,"EstimatedAmount"
+                ,"DrawingFileNo"
+                ,"DrawingFileName"
+            };
+            foreach (var item in headerNames)
+            {
+                csv += item + ',';
+            }
+            csv += "\r\n";
+            // Body
+            foreach (var item in list)
+            {
+                csv += item.Mtmr002No.ToString().Replace(",", ";") + ',';
+                csv += item.Mtmr002Index.ToString().Replace(",", ";") + ',';
+                csv += item.OrderTxt == null? "" + ',' : item.OrderTxt.ToString().Replace(",", ";") + ',';
+                csv += item.DrawingNo == null ? "" + ',' : item.DrawingNo.ToString().Replace(",", ";") + ',';
+                csv += item.ProductName == null ? "" + ',' : item.ProductName.ToString().Replace(",", ";") + ',';
+                csv += item.Quantity == null ? "" + ',' : item.Quantity.ToString().Replace(",", ";") + ',';
+                csv += item.UnitPrice == null ? "" + ',' : item.UnitPrice.ToString().Replace(",", ";") + ',';
+                csv += item.EstimatedAmount == null ? "" + ',' : item.EstimatedAmount.ToString().Replace(",", ";") + ',';
+                csv += item.DrawingFileNo == null ? "" + ',' : item.DrawingFileNo.ToString().Replace(",", ";") + ',';
+                csv += item.DrawingFileName == null ? "" + ',' : item.DrawingFileName.ToString().Replace(",", ";") + ',';
+                csv += "\r\n";
+            }
+
+            string _temporayFolder = _configuration.GetValue<string>("FilePosition:EXPORTFILE");
+            string _temporayCSVFolder = Path.Combine(_temporayFolder, $@"CSV");
+            if (!Directory.Exists(_temporayCSVFolder))
+            {
+                Directory.CreateDirectory(_temporayCSVFolder);
+            }
+            string exportFileName = $"ExportCSV_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string exportFilePath = Path.Combine(_temporayCSVFolder, $@"{exportFileName}");
+            System.IO.File.WriteAllText(exportFilePath, csv.ToString());
+            return Json(new JsonResultModel
+            {
+                Title = MessageUtil.MSG001(),
+                Type = JsonResultModel.MessageTypeEnum.question.ToString(),
+            });
+        }
+
+        [HttpPost]
+        public IActionResult ExportTXT()
+        {
+            List<VMtmr002List> list = _db.VMtmr002Lists.ToList();
+            list = list
+                .Where(u => u.Mtmr002No.Trim() == "1")
+                .OrderBy(u => u.Mtmr002No)
+                .ThenBy(u => u.Mtmr002Index)
+                .ToList();
+            string txtContents = string.Empty;
+            foreach (var item in list)
+            {
+                txtContents += item.Mtmr002No.ToString() + "    ";
+                txtContents += item.Mtmr002Index.ToString()+ "    ";
+                txtContents += item.OrderTxt == null ? "" + "    " : item.OrderTxt.ToString() + "    ";
+                txtContents += item.DrawingNo == null ? "" + "    " : item.DrawingNo.ToString() + "    ";
+                txtContents += item.ProductName == null ? "" + "    " : item.ProductName.ToString() + "    ";
+                txtContents += item.Quantity == null ? "" + "    " : item.Quantity.ToString() + "    " ;
+                txtContents += item.UnitPrice == null ? "" + "    " : item.UnitPrice.ToString() + "    ";
+                txtContents += item.EstimatedAmount == null ? "" + "    " : item.EstimatedAmount.ToString()+ "    ";
+                txtContents += item.DrawingFileNo == null ? "" + "    " : item.DrawingFileNo.ToString() + "    ";
+                txtContents += item.DrawingFileName == null ? "" + "    " : item.DrawingFileName.ToString() + "    ";
+                txtContents += "\r\n";
+            }
+            string _temporayFolder = _configuration.GetValue<string>("FilePosition:EXPORTFILE");
+            string _temporayTXTFolder = Path.Combine(_temporayFolder, $@"TXT");
+            if (!Directory.Exists(_temporayTXTFolder))
+            {
+                Directory.CreateDirectory(_temporayTXTFolder);
+            }
+            string exportFileName = $"ExportTXT_{DateTime.Now:yyyyMMddHHmmss}.txt";
+            string exportFilePath = Path.Combine(_temporayTXTFolder, $@"{exportFileName}");
+            System.IO.File.WriteAllText(exportFilePath, txtContents.ToString());
+            return Json(new JsonResultModel
+            {
+                Title = MessageUtil.MSG001(),
+                Type = JsonResultModel.MessageTypeEnum.question.ToString(),
+            });
+        }
+        
 
     }
 }

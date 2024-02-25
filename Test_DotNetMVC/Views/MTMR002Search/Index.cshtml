@@ -12,6 +12,8 @@
 
 <input type="button" class="btn btn-primary" id="regist-button" value="　TestViewPDF　" onclick="javascript:testViewPDF()" />
 <input type="button" class="btn btn-primary" id="regist-button" value="　EXCEL　" onclick="javascript:ExportExcel()" />
+<input type="button" class="btn btn-primary" id="regist-button" value="　CSV　" onclick="javascript:ExportCSV()" />
+<input type="button" class="btn btn-primary" id="regist-button" value="　TXT　" onclick="javascript:ExportTXT()" />
 
 @section Scripts{
     <script>
@@ -295,6 +297,28 @@
                 null
             ).then(data => {
                 console.log("ExportExcel", data);
+            }).catch(() => {
+                // 特に何もしない
+            });
+        }
+
+        function ExportCSV(){
+            sendAjax(
+                '@Url.Action("ExportCSV","MTMR002Search")',
+                null
+            ).then(data => {
+                console.log("ExportCSV", data);
+            }).catch(() => {
+                // 特に何もしない
+            });
+        }
+
+        function ExportTXT(){
+            sendAjax(
+                '@Url.Action("ExportTXT","MTMR002Search")',
+                null
+            ).then(data => {
+                console.log("ExportTXT", data);
             }).catch(() => {
                 // 特に何もしない
             });
