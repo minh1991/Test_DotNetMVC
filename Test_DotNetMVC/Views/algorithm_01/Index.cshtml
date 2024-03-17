@@ -1,0 +1,16 @@
+﻿<input type="button" class="btn btn-primary" id="regist-button" value="　EXCEL　" onclick="javascript:ExportExcel()" />
+
+@section Scripts{
+    <script>
+        function ExportExcel() {
+            sendAjax(
+                '@Url.Action("ExportExcel","algorithm_01")',
+                null
+            ).then(data => {
+                console.log("ExportExcel", data);
+            }).catch(() => {
+                // 特に何もしない
+            });
+        }
+    </script>
+}

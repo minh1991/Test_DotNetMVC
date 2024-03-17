@@ -16,6 +16,8 @@ namespace Test_DotNetMVC.Model.Entities
         {
         }
 
+        public virtual DbSet<Algorithm01Db> Algorithm01Dbs { get; set; } = null!;
+        public virtual DbSet<Algorithm01Txt> Algorithm01Txts { get; set; } = null!;
         public virtual DbSet<MAdv> MAdvs { get; set; } = null!;
         public virtual DbSet<MCategory> MCategories { get; set; } = null!;
         public virtual DbSet<MDrawing> MDrawings { get; set; } = null!;
@@ -50,6 +52,66 @@ namespace Test_DotNetMVC.Model.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Algorithm01Db>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("Algorithm01_DB");
+
+                entity.Property(e => e.Item1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Item_1");
+
+                entity.Property(e => e.Item2)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Item_2");
+
+                entity.Property(e => e.Item3).HasColumnName("Item_3");
+
+                entity.Property(e => e.Item4)
+                    .HasColumnType("decimal(18, 1)")
+                    .HasColumnName("Item_4");
+
+                entity.Property(e => e.Item5)
+                    .HasColumnType("decimal(18, 1)")
+                    .HasColumnName("Item_5");
+
+                entity.Property(e => e.Item6)
+                    .HasColumnType("decimal(18, 1)")
+                    .HasColumnName("Item_6");
+
+                entity.Property(e => e.Item7)
+                    .HasColumnType("decimal(18, 1)")
+                    .HasColumnName("Item_7");
+            });
+
+            modelBuilder.Entity<Algorithm01Txt>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("Algorithm01_TXT");
+
+                entity.Property(e => e.Item1)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Item_1");
+
+                entity.Property(e => e.Item2)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Item_2");
+
+                entity.Property(e => e.Item4)
+                    .HasColumnType("decimal(18, 1)")
+                    .HasColumnName("Item_4");
+
+                entity.Property(e => e.Item6)
+                    .HasColumnType("decimal(18, 1)")
+                    .HasColumnName("Item_6");
+            });
+
             modelBuilder.Entity<MAdv>(entity =>
             {
                 entity.ToTable("M_Adv");
@@ -74,7 +136,7 @@ namespace Test_DotNetMVC.Model.Entities
 
                 entity.Property(e => e.Link).HasMaxLength(500);
 
-                entity.Property(e => e.Title).HasMaxLength(150);
+                entity.Property(e => e.Title).HasMaxLength(50);
 
                 entity.Property(e => e.UpdCd)
                     .HasMaxLength(10)

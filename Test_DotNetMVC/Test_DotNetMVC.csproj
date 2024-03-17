@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Templates\" />
     <Folder Include="Temp\Exportfile\CSV\" />
     <Folder Include="Temp\Exportfile\EXCEL\" />
   </ItemGroup>
