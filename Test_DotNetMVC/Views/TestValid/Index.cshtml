@@ -11,6 +11,14 @@
                     <input type="text" class="form-control" id="HissuChk" value="a">
                 </div>
                 <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">固定桁数チェック</span>
+                    <input type="text" class="form-control" id="FixedLengthChk" value="">
+                </div>
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">範囲数値チェック</span>
+                    <input type="text" class="form-control" id="RangeNumberChk" value="">
+                </div>
+                <div class="input-group input-group-sm mb-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm">テキスト長さチェック</span>
                     <input type="text" class="form-control" id="TxtLenghtChk">
                 </div>
@@ -93,6 +101,8 @@
         function dataRegistEdit() {
             let formData = new FormData();
             formData.append('HissuChk', document.getElementById("HissuChk").value);
+            formData.append('FixedLengthChk', document.getElementById("FixedLengthChk").value);
+            formData.append('RangeNumberChk', document.getElementById("RangeNumberChk").value);
             formData.append('TxtLenghtChk', document.getElementById("TxtLenghtChk").value);
             formData.append('ZenkakuChk', document.getElementById("ZenkakuChk").value);
             formData.append('HankakuChk', document.getElementById("HankakuChk").value);

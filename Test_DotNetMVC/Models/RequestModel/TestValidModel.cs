@@ -43,6 +43,14 @@ namespace Test_DotNetMVC.Models.RequestModel
         [Required]
         public string? HissuChk { get; set; } = null;
 
+        [Display(Name = "固定桁数チェック")]
+        [FixedLength(5)]
+        public string? FixedLengthChk { get; set; } = null;
+
+        [Display(Name = "範囲数値チェック")]
+        [RangeNumber(1,99)]
+        public int? RangeNumberChk { get; set; } = 0;
+
         [Display(Name = "テキスト長さチェック")]
         [MaxLength(3)]
         public string? TxtLenghtChk { get; set; } = null;
@@ -56,7 +64,8 @@ namespace Test_DotNetMVC.Models.RequestModel
         public string? HankakuChk { get; set; } = null;
 
         [Display(Name = "数値チェック")]
-        public decimal? NumberChk { get; set; } = 0;
+        [NumberFormat(4, false)]
+        public int? NumberChk { get; set; } = 0;
 
         [Display(Name = "日時チェック")]
         [DateTimeChk("yyyy/MM/dd")]
