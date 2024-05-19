@@ -60,7 +60,6 @@ namespace Test_DotNetMVC.Attributes
 
         /// <summary>
         /// エラーメッセージカスタマイズ
-        /// メッセージID：MSGTest02
         /// </summary>
         /// <param name="_displayName"></param>
         /// <returns></returns>

@@ -56,11 +56,11 @@ namespace Test_DotNetMVC.Models.RequestModel
         public string? TxtLenghtChk { get; set; } = null;
 
         [Display(Name = "全角チェック")]
-        [ZenkakuChkByShiftJIS]
+        [ZenkakuFormat]
         public string? ZenkakuChk { get; set; } = null;
 
         [Display(Name = "半角チェック")]
-        [HankakuChkByShiftJIS]
+        [HankakuFormat]
         public string? HankakuChk { get; set; } = null;
 
         [Display(Name = "数値チェック")]
@@ -68,7 +68,7 @@ namespace Test_DotNetMVC.Models.RequestModel
         public int? NumberChk { get; set; } = 0;
 
         [Display(Name = "日時チェック")]
-        [DateTimeChk("yyyy/MM/dd")]
+        [DataTimeFormat("yyyy/MM/dd")]
         public string? DateTimeChk { get; set; } = null;
 
         [Display(Name = "日時範囲内チェックSTART")]

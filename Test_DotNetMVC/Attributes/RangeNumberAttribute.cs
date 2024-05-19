@@ -47,7 +47,7 @@ namespace Test_DotNetMVC.Attributes
 
         /// <summary>
         /// エラーメッセージカスタマイズ
-        /// メッセージID：MSG1025E
+        /// メッセージID：MSGxxxxx
         /// </summary>
         /// <param name="_displayName"></param>
         /// <returns></returns>

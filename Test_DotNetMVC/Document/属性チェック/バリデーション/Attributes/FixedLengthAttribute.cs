@@ -27,6 +27,7 @@ namespace Test_DotNetMVC.Attributes
             }
             string chkValue = value.ToString()!;
             var displayName = _length.ToString();
+            // 固定桁数チェック
             if (chkValue.Trim().Length != _length)
             {
                 return new ValidationResult(FormatErrorMessage(displayName));
@@ -36,7 +37,7 @@ namespace Test_DotNetMVC.Attributes
 
         /// <summary>
         /// エラーメッセージカスタマイズ
-        /// メッセージID：MSG1025E
+        /// メッセージID：MSGxxxxx
         /// </summary>
         /// <param name="_displayName"></param>
         /// <returns></returns>
